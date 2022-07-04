@@ -8,12 +8,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vite-plugin-multi-pages-entry": "^0.0.2",
     "vue": "^3.2.25"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
     "typescript": "^4.5.4",
-    "vite": "^2.9.9"
+    "vite": "^2.9.9",
+    "vite-plugin-multi-pages": "^0.0.3"
   }
 }

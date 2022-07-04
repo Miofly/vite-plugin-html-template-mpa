@@ -31,7 +31,6 @@ export default function htmlTemplate (userOptions: UserOptions = {}): Plugin {
         dfs2(rebuildData, key, value);
       }
     });
-    console.log(rebuildData, '----');
     options.data = rebuildData;
   }
   let config: ResolvedConfig;
