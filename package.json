@@ -1,8 +1,8 @@
 {
   "name": "vite-plugin-html-template-mpa",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "html template map for vite",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"

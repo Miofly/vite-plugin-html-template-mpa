@@ -1,7 +1,6 @@
 # vite-plugin-html-template-mpa
 
-> 对 `Vite` 的多页应用支持通用的 `index.html` 模板配置，在 `/` 路径会生成所有
-> 页面的跳转路径，支持自定义各页面的配置信息
+> The multi page application of 'vite' supports the general 'index' HTML 'template configuration. Jump paths of all pages will be generated in the ` ` path, and the configuration information of each page can be customized
 
 ## Usage
 
@@ -11,10 +10,10 @@ yarn add vite-plugin-html-template-mpa
 pnpm add vite-plugin-html-template-mpa
 ```
 
-## 如何使用
-配合多入口插件：[https://github.com/Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
+## How to use
+Cooperate with multi entry plug-in：[https://github.com/Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
 
-> 不使用上述插件，需自己配置 `rollupOptions` 的 `input` 入口
+> Without using the above plug-ins, you need to configure the 'input' entry of 'rollupoptions'
 ```ts
 // vite.config.ts
 import htmlTemplate from 'vite-plugin-html-template-mpa'
@@ -22,7 +21,7 @@ import mpa from 'vite-plugin-multi-pages-entry';
 // @see https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    mpa()
+    mpa(),
     // ...other plugins
     htmlTemplate(/* options */),
   ],
@@ -34,12 +33,12 @@ export default defineConfig({
 ```typescript
 export interface Options {
   /**
-   * 页面目录
+   * pageDirectory
    * @default 'src/pages'
    */
   pagesDir: string
   /**
-   * 页面配置选项
+   * page configuration options
    * @see {@link https://cli.vuejs.org/config/#pages}
    */
   pages: {
@@ -72,6 +71,7 @@ export interface Options {
    * @default '/src/main'
    */
   entry?: string
+  /** Homepage jump tab jump method */
   jumpTarget?: '_self' | '_blank'
 }
 ```
