@@ -1,19 +1,19 @@
 # vite-plugin-html-template-mpa
 
-**English** | [中文](./README.zh_CN.md)
+**中文** | [English](./README.md)
 
-## Features
+## 功能
 
-- HTML compression capability
-- Single page and multi page application support
-- Support customization `entry`、`template`
-- Support multi page applications to generate home pages, including jump paths of all pages
-- The support packaging directory has changed its' HTML 'name and path
-- support resource addition hash in html pages
+- `HTML` 压缩能力
+- 单页/多页应用支持
+- 支持自定义 `entry`、`template`
+- 支持多页应用生成主页面包含所有页面的跳转路径
+- 支持打包目录已经 `html` 名称改变，路径改变
+- 支持 `html` 页面中资源增加 `hash`
 
-## How to use
+## 如何使用
 
-### Install
+### 安装
 
 ```sh
 yarn add vite-plugin-html-template-mpa
@@ -21,11 +21,10 @@ yarn add vite-plugin-html-template-mpa
 pnpm add vite-plugin-html-template-mpa
 ```
 
-### Usage
+### 配置
 
-Single page application
+单页应用
 **vite.config.ts**
-
 ```typescript
 import htmlTemplate from 'vite-plugin-html-template-mpa'
 
@@ -36,7 +35,7 @@ export default defineConfig({
 })
 ```
 
-Multi page application
+多页应用
 **vite.config.ts**
 
 ```typescript
@@ -48,7 +47,7 @@ export default defineConfig({
 			pagesDir: 'src/views',
 			pages: {
 				'test-one': {
-					title: 'testTitle',
+					title: '测试标题',
 					urlParams: 'id=33'
 				},
 				'test-twos': {
@@ -62,24 +61,25 @@ export default defineConfig({
 				htmlHash: true
 			},
 			data: {
-				title: 'defaultTitle'
+				title: '默认标题'
 			}
     }),
 	],
 })
 ```
 
-## Options
+
+## 配置参数
 
 ```typescript
 export interface Options {
 	/**
-	 * multi page application directory
+	 * 多页应用目录
 	 * @default src/pages
 	 */
 	pagesDir: string
 	/**
-	 * multi page application configuration
+	 * 多页应用配置
 	 * @see {@link https://cli.vuejs.org/config/#pages}
 	 */
 	pages: {
@@ -89,28 +89,28 @@ export interface Options {
 			 */
 			template?: string
 			/**
-			 * page title
+       * 页面 title
 			 * @default 'Home Page'
 			 */
 			title?: string
 			/**
-			 * entry file
+			 * 入口文件
 			 */
 			entry?: string
 			/**
-			 * template file
+       * 模板文件
 			 * @default '${pageName}/index.html' at dest
 			 */
 			filename?: string
 			/**
-			 * add parameters to the root page link
+			 * 根页面链接添加参数
 			 * @example id=12323&token=0000
 			 */
 			urlParams?: string
 		}
 	}
 	/**
-	 * data exposed to the template
+	 * 暴露于模板的数据
 	 * @default {}
 	 */
 	data: Record<string, any>
@@ -119,45 +119,45 @@ export interface Options {
 	 */
 	entry?: string
 	/**
-	 * multi page application home page jump mode
+	 * 多页应用程序主页跳转模式
 	 */
 	jumpTarget?: '_self' | '_blank'
 	buildCfg: {
 		/**
-		 * generate multi page application add prefix
+		 * 生成多页应用添加前缀
 		 * @default '' | string
 		 */
 		buildPrefixName?: string;
 		/**
-		 * The generated index HTML to the top, and index Rename HTML to multi page application name html
+		 * 将生成的 index.html 提升至最顶层，并将 index.html 重命名为 多页应用名称.html
 		 * @default true
 		 */
 		moveHtmlTop?: boolean
 		/**
-		 * The generated index The parent directory of HTML is promoted to the top level
+		 * 将生成的 index.html 的父目录提升至最顶层
 		 * @default false
 		 */
 		moveHtmlDirTop?: boolean
 		/**
-		 * Add a hash to the resources in the generated HTML file
+		 * 对生成的 html 文件中的 js 与 css 添加唯一的 hash 值
      * @default false
 		 */
 		htmlHash?: boolean
     /**
-     * build asset dir add name
+     * 打包时对 asset 目录增加目录名
      */
     buildAssetDirName: string
     /**
-     * build chunk dir add name
+     * 打包时对 chunk 目录增加目录名
      */
     buildChunkDirName: string
     /**
-     * build entry dir add name
+     * 打包时对 entry 目录增加目录名
      */
     buildEntryDirName: string
 	},
 	/**
-	 * Minimize options
+	 * html 压缩配置
    * @default true
 	 */
 	minify?: MinifyOptions | boolean
@@ -165,7 +165,7 @@ export interface Options {
 
 ```
 
-### default compression configuration
+### 默认压缩配置
 
 ```
 collapseWhitespace: true,
@@ -178,17 +178,17 @@ useShortDoctype: true,
 minifyCSS: true,
 ```
 
-## use examples
+## 使用示例
 
-single page application
+单页应用
 
 - [src/examples](https://github.com/Miofly/vite-plugin-html-template-mpa/tree/master/examples/vite-plugin-demo-spa)
 
-multi page application
+多页应用
 
 - [src/examples](https://github.com/Miofly/vite-plugin-html-template-mpa/tree/master/examples/vite-plugin-demo-mpa)
 
-## MORE
+## 更多
 
-- Cooperate with `vite-plugin-multi-pages` multi page application configuration: [https://github.com/Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
-- Cooperate with `vite-plugin-vconsole-mpa` to automatically configure 'vconsole'`: [https://github.com/Miofly/vite-plugin-vconsole-mpa](https://github.com/Miofly/vite-plugin-vconsole-mpa)
+- 配合 `vite-plugin-multi-pages` 多页面应用配置: [https://github.com/Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
+- 配合 `vite-plugin-vconsole-mpa` 自动配置 `vconsole`: [https://github.com/Miofly/vite-plugin-vconsole-mpa](https://github.com/Miofly/vite-plugin-vconsole-mpa)

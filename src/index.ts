@@ -1,29 +1,44 @@
 import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
-import type { UserOptions } from './lib/options';
+import type { HtmlTemplateMpaOptions } from './types';
 import path from 'path';
 import shell from 'shelljs';
 import { last } from 'lodash';
-import { dfs, dfs2, getHtmlContent } from './lib/utils';
+import { dfs, dfs2, getHtmlContent, isMpa, minifyHtml } from './utils';
 import { name } from '../package.json';
+import { createHash } from 'crypto';
+import { OutputOptions } from 'rollup';
 
 const resolve = (p: string) => path.resolve(process.cwd(), p);
 
 const PREFIX = 'src';
 const isWin32 = require('os').platform() === 'win32';
+const uniqueHash = createHash('sha256').update(String(new Date().getTime())).digest('hex').substring(0, 16);
 
-export default function htmlTemplate (userOptions: UserOptions = {}): Plugin {
+export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}): Plugin {
   const options = {
     pagesDir: 'src/pages',
     pages: {},
-    data: {},
+    data: {
+      title: 'Home Page'
+    },
     jumpTarget: '_self',
+    buildCfg: {
+      moveHtmlTop: true,
+      moveHtmlDirTop: false,
+      buildPrefixName: '',
+      htmlHash: false,
+      buildAssetDirName: '',
+      buildChunkDirName: '',
+      buildEntryDirName: ''
+    },
+    minify: true,
     ...userOptions
   };
   
   if (options.data) {
     const rebuildData = {};
     Object.keys(options.data).forEach((key) => {
-      const value = options.data[key];
+      const value = (options.data as any)[key];
       if (key.includes('.')) {
         const keys = key.split('.');
         dfs(keys, value, rebuildData);
@@ -35,21 +50,79 @@ export default function htmlTemplate (userOptions: UserOptions = {}): Plugin {
   }
   let config: ResolvedConfig;
   return {
+    enforce: 'post',
     name,
     configResolved (resolvedConfig) {
+      const { buildPrefixName, htmlHash, buildAssetDirName,
+        buildChunkDirName, buildEntryDirName } = options.buildCfg;
+      const assetDir = resolvedConfig.build.assetsDir || 'assets';
+      
+      if (isMpa(resolvedConfig)) {
+        const _output = resolvedConfig.build.rollupOptions.output as OutputOptions;
+  
+        if (buildPrefixName) {
+          const _input = {} as any;
+          const rollupInput = resolvedConfig.build.rollupOptions.input as any;
+          Object.keys(rollupInput).map((key) => {
+            _input[(buildPrefixName || '') + key] = rollupInput[key];
+          });
+          resolvedConfig.build.rollupOptions.input = _input;
+        }
+  
+        if (htmlHash) {
+          const buildAssets = {
+            entryFileNames: `${assetDir}/[name].js`,
+            chunkFileNames: `${assetDir}/[name].js`,
+            assetFileNames: `${assetDir}/[name].[ext]`
+          };
+    
+          const buildOutput = resolvedConfig.build.rollupOptions.output;
+    
+          if (buildOutput) {
+            resolvedConfig.build.rollupOptions.output = {
+              ...buildOutput,
+              ...buildAssets
+            };
+          } else {
+            resolvedConfig.build.rollupOptions.output = buildAssets;
+          }
+        }
+        
+        console.log(buildAssetDirName, 'buildAssetDirNamebuildAssetDirNamebuildAssetDirNamebuildAssetDirNamebuildAssetDirName');
+        
+        if (buildAssetDirName) {
+          if (htmlHash || !String(_output.assetFileNames)?.includes('[hash]')) {
+            _output.assetFileNames = `${assetDir}/${buildAssetDirName}/[name].[ext]`;
+          } else {
+            _output.assetFileNames = `${assetDir}/${buildAssetDirName}/[name]-[hash].[ext]`;
+          }
+        }
+  
+        if (buildChunkDirName) {
+          if (htmlHash || !String(_output.chunkFileNames)?.includes('[hash]')) {
+            _output.chunkFileNames = `${assetDir}/${buildChunkDirName}/[name].js`;
+          } else {
+            _output.chunkFileNames = `${assetDir}/${buildChunkDirName}/[name]-[hash].js`;
+          }
+        }
+  
+        if (buildEntryDirName) {
+          if (htmlHash || !String(_output.entryFileNames)?.includes('[hash]')) {
+            _output.entryFileNames = `${assetDir}/${buildEntryDirName}/[name].js`;
+          } else {
+            _output.entryFileNames = `${assetDir}/${buildEntryDirName}/[name]-[hash].js`;
+          }
+        }
+      }
       config = resolvedConfig;
     },
-    /**
-     * for dev
-     * if SPA, just use template and write script main.{js,ts} for /{entry}.html
-     * if MPA, check pageName(default is index) and write /${pagesDir}/{pageName}/${entry}.html
-     */
     configureServer (server: ViteDevServer) {
       return () => {
         server.middlewares.use(async(req, res, next) => {
           if (!req.url?.endsWith('.html') && req.url !== '/') {
             return next();
           }
+          
           const url = req.url;
           
           const pageName = (() => {
@@ -61,27 +134,21 @@ export default function htmlTemplate (userOptions: UserOptions = {}): Plugin {
           
           const httpName = config.server.https ? 'https://' : 'http://';
           
-          // options.pages 用户对每个页面的独立配置
           const page = options.pages[pageName] || {};
           
-          // 获取用户自定义的模板页面
           const templateOption = page.template;
-          // 模板路径
+          
           const templatePath = templateOption
             ? resolve(templateOption)
             : resolve('public/index.html');
-          // 判断是否为多页面入口
-          const isMPA =
-            typeof config.build.rollupOptions.input !== 'string' &&
-            Object.keys(config.build.rollupOptions.input || {}).length > 0;
-          //
+          
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
             pageName,
             templatePath,
             pageEntry: page.entry || 'main',
-            pageTitle: page.title || 'Home Page',
-            isMPA,
+            pageTitle: page.title || '',
+            isMPA: isMpa(config),
             data: options.data,
             entry: options.entry || '/src/main',
             extraData: {
@@ -92,50 +159,36 @@ export default function htmlTemplate (userOptions: UserOptions = {}): Plugin {
             pages: options.pages,
             jumpTarget: options.jumpTarget,
             hasUnocss: JSON.stringify(config.plugins).includes('unocss'),
-            hasMpaPlugin: JSON.stringify(config.plugins).includes('vite-plugin-multi-pages-entry'),
+            hasMpaPlugin: JSON.stringify(config.plugins).includes('vite-plugin-multi-pages'),
             origin: httpName + req.headers.host
           });
           
-          // using vite's transform html function to add basic html support
           content = await server.transformIndexHtml?.(url, content, req.originalUrl);
           
           res.end(content);
         });
       };
     },
-    /**
-     * for dev
-     * @see {@link https://github.com/rollup/plugins/blob/master/packages/virtual/src/index.ts}
-     */
     resolveId (id) {
       if (id.endsWith('.html')) {
-        const isMPA =
-          typeof config.build.rollupOptions.input !== 'string' &&
-          Object.keys(config.build.rollupOptions.input || {}).length > 0;
-        if (!isMPA) {
+        if (!isMpa(config)) {
           return `${PREFIX}/${path.basename(id)}`;
         } else {
           const pageName = last(path.dirname(id).split(isWin32 ? '\\' : '/')) || '';
-          for (const key in config.build.rollupOptions.input as any) {
-            if ((config.build.rollupOptions.input as any)?.[key] === id) {
+          
+          const _inputCfg: any = config.build.rollupOptions.input;
+          
+          for (const key in _inputCfg) {
+            if (_inputCfg?.[key] === id) {
               return isWin32
                 ? id.replace(/\\/g, '/')
                 : `${PREFIX}/${options.pagesDir.replace('src/', '')}/${pageName}/index.html`;
             }
           }
-        
-          // if (pageName in (config.build.rollupOptions.input as any)) {
-          //    const test = isWin32
-          //      ? id.replace(/\\/g, '/')
-          //      : `${PREFIX}/${options.pagesDir.replace('src/', '')}/${pageName}/index.html`;
-          //    console.log(test);
-          //   return test
-          // }
         }
       }
       return null;
     },
-    /** for dev */
     load (id) {
       if (
         isWin32
@@ -143,27 +196,22 @@ export default function htmlTemplate (userOptions: UserOptions = {}): Plugin {
           : id.startsWith(PREFIX)
       ) {
         const idNoPrefix = id.slice(PREFIX.length);
-        // resolveId checked isWin32 already
         const pageName = last(path.dirname(id).split('/')) || '';
         
         const page = options.pages[pageName] || {};
         const templateOption = page.template;
         const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html');
-        const isMPA =
-          typeof config.build?.rollupOptions.input !== 'string' &&
-          Object.keys(config.build?.rollupOptions.input || {}).length > 0;
         
         return getHtmlContent({
           pagesDir: options.pagesDir,
-          // pageName: pageName.replace(options.prefixName, ''),
           pageName,
           templatePath,
           pageEntry: page.entry || 'main',
-          pageTitle: page.title || 'Home Page',
-          isMPA,
+          pageTitle: page.title || '',
+          isMPA: isMpa(config),
           extraData: {
             base: config.base,
-            url: isMPA ? idNoPrefix : '/'
+            url: isMpa(config) ? idNoPrefix : '/'
           },
           data: options.data,
           entry: options.entry || '/src/main',
@@ -173,24 +221,38 @@ export default function htmlTemplate (userOptions: UserOptions = {}): Plugin {
       }
       return null;
     },
-    /** for build */
-    closeBundle () {
-      const isMPA =
-        typeof config.build?.rollupOptions.input !== 'string' &&
-        Object.keys(config.build?.rollupOptions.input || {}).length > 0;
-      // MPA handled by vite-plugin-mpa
-      if (!isMPA) {
-        const root = config.root || process.cwd();
-        const dest = (config.build && config.build.outDir) || 'dist';
-        const resolve = (p: string) => path.resolve(root, p);
+    async generateBundle (_, bundle) {
+      const htmlFiles = Object.keys(bundle).filter((i) => i.endsWith('.html'));
+      
+      for (const item of htmlFiles) {
+        const htmlChunk = bundle[item] as any;
+        const { moveHtmlTop, moveHtmlDirTop, buildPrefixName, htmlHash } = options.buildCfg;
+        const _pageName = htmlChunk.fileName.split('/');
+        const htmlName = (buildPrefixName || '') + _pageName[_pageName.length - 2];
         
-        // 1. move src/*.html to dest root
-        shell.mv(resolve(`${dest}/${PREFIX}/*.html`), resolve(dest));
-        // 2. remove empty src dir
-        shell.rm('-rf', resolve(`${dest}/${PREFIX}`));
+        if (htmlHash && htmlChunk) {
+          const _source = htmlChunk.source.replace(/\.js/g, `.js?${uniqueHash}`).replace(/.css/g, `.css?${uniqueHash}`);
+          htmlChunk.source = await minifyHtml(_source, options.minify);
+        }
+        
+        if (isMpa(config)) {
+          if (moveHtmlTop) {
+            htmlChunk.fileName = htmlName + '.html';
+          } else if (moveHtmlDirTop) {
+            htmlChunk.fileName = htmlName + '/index.html';
+          }
+        } else {
+          htmlChunk.fileName = 'index.html';
+        }
+      }
+    },
+    closeBundle () {
+      const dest = (config.build && config.build.outDir) || 'dist';
+      if (isMpa(config)) {
+        shell.rm('-rf', resolve(`${dest}/index.html`));
       }
     }
   };
 }
 
-export type { UserOptions as HtmlTemplateOptions };
+export type { HtmlTemplateMpaOptions };
