@@ -13,6 +13,6 @@ export default defineConfig({
       buildCfg: {
         htmlHash: true
       }
-    }),
+    })
   ]
 });

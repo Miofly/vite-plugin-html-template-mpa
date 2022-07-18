@@ -30,9 +30,9 @@ Single page application
 import htmlTemplate from 'vite-plugin-html-template-mpa'
 
 export default defineConfig({
-	plugins: [
-		htmlTemplate(/* options */),
-	],
+  plugins: [
+    htmlTemplate(/* options */),
+  ],
 })
 ```
 
@@ -43,29 +43,29 @@ Multi page application
 import htmlTemplate from 'vite-plugin-html-template-mpa'
 
 export default defineConfig({
-	plugins: [
-		htmlTemplate({
-			pagesDir: 'src/views',
-			pages: {
-				'test-one': {
-					title: 'testTitle',
-					urlParams: 'id=33'
-				},
-				'test-twos': {
-					urlParams: 'id=33'
-				}
-			},
-			buildCfg: {
-				moveHtmlTop: true,
-				moveHtmlDirTop: false,
-				buildPrefixName: '',
-				htmlHash: true
-			},
-			data: {
-				title: 'defaultTitle'
-			}
+  plugins: [
+    htmlTemplate({
+      pagesDir: 'src/views',
+      pages: {
+        'test-one': {
+          title: 'testTitle',
+          urlParams: 'id=33'
+        },
+        'test-twos': {
+          urlParams: 'id=33'
+        }
+      },
+      buildCfg: {
+        moveHtmlTop: true,
+        moveHtmlDirTop: false,
+        buildPrefixName: '',
+        htmlHash: true
+      },
+      data: {
+        title: 'defaultTitle'
+      }
     }),
-	],
+  ],
 })
 ```
 
@@ -73,76 +73,76 @@ export default defineConfig({
 
 ```typescript
 export interface Options {
-	/**
-	 * multi page application directory
-	 * @default src/pages
-	 */
-	pagesDir: string
-	/**
-	 * multi page application configuration
-	 * @see {@link https://cli.vuejs.org/config/#pages}
-	 */
-	pages: {
-		[pageName: string]: {
-			/**
-			 * @default public/index.html
-			 */
-			template?: string
-			/**
-			 * page title
-			 * @default 'Home Page'
-			 */
-			title?: string
-			/**
-			 * entry file
-			 */
-			entry?: string
-			/**
-			 * template file
-			 * @default '${pageName}/index.html' at dest
-			 */
-			filename?: string
-			/**
-			 * add parameters to the root page link
-			 * @example id=12323&token=0000
-			 */
-			urlParams?: string
-		}
-	}
-	/**
-	 * data exposed to the template
-	 * @default {}
-	 */
-	data: Record<string, any>
-	/**
-	 * @default '/src/main'
-	 */
-	entry?: string
-	/**
-	 * multi page application home page jump mode
-	 */
-	jumpTarget?: '_self' | '_blank'
-	buildCfg: {
-		/**
-		 * generate multi page application add prefix
-		 * @default '' | string
-		 */
-		buildPrefixName?: string;
-		/**
-		 * The generated index HTML to the top, and index Rename HTML to multi page application name html
-		 * @default true
-		 */
-		moveHtmlTop?: boolean
-		/**
-		 * The generated index The parent directory of HTML is promoted to the top level
-		 * @default false
-		 */
-		moveHtmlDirTop?: boolean
-		/**
-		 * Add a hash to the resources in the generated HTML file
+  /**
+   * multi page application directory
+   * @default src/pages
+   */
+  pagesDir: string
+  /**
+   * multi page application configuration
+   * @see {@link https://cli.vuejs.org/config/#pages}
+   */
+  pages: {
+    [pageName: string]: {
+      /**
+       * @default public/index.html
+       */
+      template?: string
+      /**
+       * page title
+       * @default 'Home Page'
+       */
+      title?: string
+      /**
+       * entry file
+       */
+      entry?: string
+      /**
+       * template file
+       * @default '${pageName}/index.html' at dest
+       */
+      filename?: string
+      /**
+       * add parameters to the root page link
+       * @example id=12323&token=0000
+       */
+      urlParams?: string
+    }
+  }
+  /**
+   * data exposed to the template
+   * @default {}
+   */
+  data: Record<string, any>
+  /**
+   * @default '/src/main'
+   */
+  entry?: string
+  /**
+   * multi page application home page jump mode
+   */
+  jumpTarget?: '_self' | '_blank'
+  buildCfg: {
+    /**
+     * generate multi page application add prefix
+     * @default '' | string
+     */
+    buildPrefixName?: string;
+    /**
+     * The generated index HTML to the top, and index Rename HTML to multi page application name html
+     * @default true
+     */
+    moveHtmlTop?: boolean
+    /**
+     * The generated index The parent directory of HTML is promoted to the top level
      * @default false
-		 */
-		htmlHash?: boolean
+     */
+    moveHtmlDirTop?: boolean
+    /**
+     * Add a hash to the resources in the generated HTML file
+     * @default false
+     */
+    htmlHash?: boolean
     /**
      * build asset dir add name
      */
@@ -155,12 +155,12 @@ export interface Options {
      * build entry dir add name
      */
     buildEntryDirName: string
-	},
-	/**
-	 * Minimize options
+  },
+  /**
+   * Minimize options
    * @default true
-	 */
-	minify?: MinifyOptions | boolean
+   */
+  minify?: MinifyOptions | boolean
 }
 
 ```
@@ -190,5 +190,7 @@ multi page application
 
 ## MORE
 
-- Cooperate with `vite-plugin-multi-pages` multi page application configuration: [https://github.com/Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
-- Cooperate with `vite-plugin-vconsole-mpa` to automatically configure 'vconsole'`: [https://github.com/Miofly/vite-plugin-vconsole-mpa](https://github.com/Miofly/vite-plugin-vconsole-mpa)
+- Cooperate with `vite-plugin-multi-pages` multi page application
+  configuration: [https://github.com/Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
+- Cooperate with `vite-plugin-vconsole-mpa` to automatically configure '
+  vconsole'`: [https://github.com/Miofly/vite-plugin-vconsole-mpa](https://github.com/Miofly/vite-plugin-vconsole-mpa)
