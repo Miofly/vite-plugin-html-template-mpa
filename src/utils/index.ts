@@ -38,7 +38,6 @@ export async function getHtmlContent (payload: Payload) {
   let content = '';
   
   /**
-   * 最后生成
    * - /src/pages/test-one/main
    * - /src/pages/index/main
    */
