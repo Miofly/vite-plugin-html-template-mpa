@@ -173,7 +173,7 @@ export function dfs2 (rebuildData: Record<string, any>, key: string, value: Reco
 
 export function isMpa (viteConfig: ResolvedConfig) {
   const input = viteConfig?.build?.rollupOptions?.input ?? undefined;
-  return typeof input !== 'string' && Object.keys(input || {}).length > 1;
+  return typeof input !== 'string' && Object.keys(input || {}).length >= 1;
 }
 
 function getOptions (minify: boolean): MinifyOptions {

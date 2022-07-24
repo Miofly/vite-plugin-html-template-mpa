@@ -88,8 +88,6 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
           }
         }
         
-        console.log(buildAssetDirName, 'buildAssetDirNamebuildAssetDirNamebuildAssetDirNamebuildAssetDirNamebuildAssetDirName');
-        
         if (buildAssetDirName) {
           if (htmlHash || !String(_output.assetFileNames)?.includes('[hash]')) {
             _output.assetFileNames = `${assetDir}/${buildAssetDirName}/[name].[ext]`;
@@ -133,14 +131,13 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
           })();
           
           const httpName = config.server.https ? 'https://' : 'http://';
-          
           const page = options.pages[pageName] || {};
           
           const templateOption = page.template;
           
           const templatePath = templateOption
             ? resolve(templateOption)
-            : resolve('public/index.html');
+            : isMpa(config) ? resolve('public/index.html') : resolve('index.html');
           
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
@@ -200,8 +197,10 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
         
         const page = options.pages[pageName] || {};
         const templateOption = page.template;
-        const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html');
-        
+        const templatePath = templateOption
+          ? resolve(templateOption)
+          : isMpa(config) ? resolve('public/index.html') : resolve('index.html');
+  
         return getHtmlContent({
           pagesDir: options.pagesDir,
           pageName,
@@ -230,9 +229,16 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
         const _pageName = htmlChunk.fileName.split('/');
         const htmlName = (buildPrefixName || '') + _pageName[_pageName.length - 2];
         
-        if (htmlHash && htmlChunk) {
-          const _source = htmlChunk.source.replace(/\.js/g, `.js?${uniqueHash}`).replace(/.css/g, `.css?${uniqueHash}`);
-          htmlChunk.source = await minifyHtml(_source, options.minify);
+        if (htmlChunk) {
+          let _source = htmlChunk.source;
+        	if (htmlHash) {
+            _source = htmlChunk.source.replace(/\.js/g, `.js?${uniqueHash}`).replace(/.css/g, `.css?${uniqueHash}`);
+        	}
+          if (options.minify) {
+            htmlChunk.source = await minifyHtml(_source, options.minify);
+          } else {
+            htmlChunk.source = _source;
+          }
         }
         
         if (isMpa(config)) {

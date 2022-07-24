@@ -74,15 +74,15 @@ export interface Options {
     /**
      * build asset dir add name
      */
-    buildAssetDirName: string
+    buildAssetDirName?: string
     /**
      * build chunk dir add name
      */
-    buildChunkDirName: string
+    buildChunkDirName?: string
     /**
      * build entry dir add name
      */
-    buildEntryDirName: string
+    buildEntryDirName?: string
   },
   /**
    * Minimize options
