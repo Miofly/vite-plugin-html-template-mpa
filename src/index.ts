@@ -111,6 +111,10 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
             _output.entryFileNames = `${assetDir}/${buildEntryDirName}/[name]-[hash].js`;
           }
         }
+        resolvedConfig.build.rollupOptions.output = {
+          ...resolvedConfig.build.rollupOptions.output,
+          ..._output
+        };
       }
       config = resolvedConfig;
     },
@@ -226,7 +230,7 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
       for (const item of htmlFiles) {
         const htmlChunk = bundle[item] as any;
         const { moveHtmlTop, moveHtmlDirTop, buildPrefixName, htmlHash } = options.buildCfg;
-        const _pageName = htmlChunk.fileName.split('/');
+        const _pageName = htmlChunk.fileName.replace(/\\/g, '/').split('/');
         const htmlName = (buildPrefixName || '') + _pageName[_pageName.length - 2];
         
         if (htmlChunk) {
