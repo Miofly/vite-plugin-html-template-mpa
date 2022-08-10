@@ -14,7 +14,7 @@ const PREFIX = 'src';
 const isWin32 = require('os').platform() === 'win32';
 const uniqueHash = createHash('sha256').update(String(new Date().getTime())).digest('hex').substring(0, 16);
 
-export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}): Plugin {
+export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
   const options = {
     pagesDir: 'src/pages',
     pages: {},
@@ -29,12 +29,14 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
       htmlHash: false,
       buildAssetDirName: '',
       buildChunkDirName: '',
-      buildEntryDirName: ''
+      buildEntryDirName: '',
+      htmlPrefixSearchValue: '',
+      htmlPrefixReplaceValue: ''
     },
     minify: true,
     ...userOptions
   };
-  
+
   if (options.data) {
     const rebuildData = {};
     Object.keys(options.data).forEach((key) => {
@@ -52,32 +54,33 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
   return {
     enforce: 'post',
     name,
-    configResolved (resolvedConfig) {
-      const { buildPrefixName, htmlHash, buildAssetDirName,
-        buildChunkDirName, buildEntryDirName } = options.buildCfg;
+    configResolved(resolvedConfig) {
+      const isBuild = resolvedConfig.mode === 'production';
+
+      const { buildPrefixName, htmlHash, buildAssetDirName, buildChunkDirName, buildEntryDirName } = options.buildCfg;
       const assetDir = resolvedConfig.build.assetsDir || 'assets';
-      
+
       if (isMpa(resolvedConfig)) {
         const _output = resolvedConfig.build.rollupOptions.output as OutputOptions;
-  
+
         if (buildPrefixName) {
           const _input = {} as any;
           const rollupInput = resolvedConfig.build.rollupOptions.input as any;
           Object.keys(rollupInput).map((key) => {
-            _input[(buildPrefixName || '') + key] = rollupInput[key];
+            _input[((isBuild ? buildPrefixName : '') || '') + key] = rollupInput[key];
           });
           resolvedConfig.build.rollupOptions.input = _input;
         }
-  
+
         if (htmlHash) {
           const buildAssets = {
             entryFileNames: `${assetDir}/[name].js`,
             chunkFileNames: `${assetDir}/[name].js`,
             assetFileNames: `${assetDir}/[name].[ext]`
           };
-    
+
           const buildOutput = resolvedConfig.build.rollupOptions.output;
-    
+
           if (buildOutput) {
             resolvedConfig.build.rollupOptions.output = {
               ...buildOutput,
@@ -87,7 +90,7 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
             resolvedConfig.build.rollupOptions.output = buildAssets;
           }
         }
-        
+
         if (buildAssetDirName) {
           if (htmlHash || !String(_output.assetFileNames)?.includes('[hash]')) {
             _output.assetFileNames = `${assetDir}/${buildAssetDirName}/[name].[ext]`;
@@ -95,7 +98,7 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
             _output.assetFileNames = `${assetDir}/${buildAssetDirName}/[name]-[hash].[ext]`;
           }
         }
-  
+
         if (buildChunkDirName) {
           if (htmlHash || !String(_output.chunkFileNames)?.includes('[hash]')) {
             _output.chunkFileNames = `${assetDir}/${buildChunkDirName}/[name].js`;
@@ -103,7 +106,7 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
             _output.chunkFileNames = `${assetDir}/${buildChunkDirName}/[name]-[hash].js`;
           }
         }
-  
+
         if (buildEntryDirName) {
           if (htmlHash || !String(_output.entryFileNames)?.includes('[hash]')) {
             _output.entryFileNames = `${assetDir}/${buildEntryDirName}/[name].js`;
@@ -118,31 +121,33 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
       }
       config = resolvedConfig;
     },
-    configureServer (server: ViteDevServer) {
+    configureServer(server: ViteDevServer) {
       return () => {
-        server.middlewares.use(async(req, res, next) => {
+        server.middlewares.use(async (req, res, next) => {
           if (!req.url?.endsWith('.html') && req.url !== '/') {
             return next();
           }
-          
+
           const url = req.url;
-          
+
           const pageName = (() => {
             if (url === '/') {
               return 'index';
             }
             return url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index';
           })();
-          
+
           const httpName = config.server.https ? 'https://' : 'http://';
           const page = options.pages[pageName] || {};
-          
+
           const templateOption = page.template;
-          
+
           const templatePath = templateOption
             ? resolve(templateOption)
-            : isMpa(config) ? resolve('public/index.html') : resolve('index.html');
-          
+            : isMpa(config)
+            ? resolve('public/index.html')
+            : resolve('index.html');
+
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
             pageName,
@@ -163,22 +168,22 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
             hasMpaPlugin: JSON.stringify(config.plugins).includes('vite-plugin-multi-pages'),
             origin: httpName + req.headers.host
           });
-          
+
           content = await server.transformIndexHtml?.(url, content, req.originalUrl);
-          
+
           res.end(content);
         });
       };
     },
-    resolveId (id) {
+    resolveId(id) {
       if (id.endsWith('.html')) {
         if (!isMpa(config)) {
           return `${PREFIX}/${path.basename(id)}`;
         } else {
           const pageName = last(path.dirname(id).split(isWin32 ? '\\' : '/')) || '';
-          
+
           const _inputCfg: any = config.build.rollupOptions.input;
-          
+
           for (const key in _inputCfg) {
             if (_inputCfg?.[key] === id) {
               return isWin32
@@ -190,21 +195,19 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
       }
       return null;
     },
-    load (id) {
-      if (
-        isWin32
-          ? id.startsWith(resolve('').replace(/\\/g, '/')) && id.endsWith('.html')
-          : id.startsWith(PREFIX)
-      ) {
+    load(id) {
+      if (isWin32 ? id.startsWith(resolve('').replace(/\\/g, '/')) && id.endsWith('.html') : id.startsWith(PREFIX)) {
         const idNoPrefix = id.slice(PREFIX.length);
         const pageName = last(path.dirname(id).split('/')) || '';
-        
+
         const page = options.pages[pageName] || {};
         const templateOption = page.template;
         const templatePath = templateOption
           ? resolve(templateOption)
-          : isMpa(config) ? resolve('public/index.html') : resolve('index.html');
-  
+          : isMpa(config)
+          ? resolve('public/index.html')
+          : resolve('index.html');
+
         return getHtmlContent({
           pagesDir: options.pagesDir,
           pageName,
@@ -224,27 +227,35 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
       }
       return null;
     },
-    async generateBundle (_, bundle) {
+    async generateBundle(_, bundle) {
       const htmlFiles = Object.keys(bundle).filter((i) => i.endsWith('.html'));
-      
+
       for (const item of htmlFiles) {
         const htmlChunk = bundle[item] as any;
         const { moveHtmlTop, moveHtmlDirTop, buildPrefixName, htmlHash } = options.buildCfg;
         const _pageName = htmlChunk.fileName.replace(/\\/g, '/').split('/');
         const htmlName = (buildPrefixName || '') + _pageName[_pageName.length - 2];
-        
+
         if (htmlChunk) {
           let _source = htmlChunk.source;
-        	if (htmlHash) {
+
+          if (htmlHash) {
             _source = htmlChunk.source.replace(/\.js/g, `.js?${uniqueHash}`).replace(/.css/g, `.css?${uniqueHash}`);
-        	}
+          }
           if (options.minify) {
             htmlChunk.source = await minifyHtml(_source, options.minify);
           } else {
             htmlChunk.source = _source;
           }
+
+          if (options?.buildCfg?.htmlPrefixSearchValue) {
+            htmlChunk.source = htmlChunk.source.replace(
+              new RegExp(options.buildCfg.htmlPrefixSearchValue, 'g'),
+              options?.buildCfg?.htmlPrefixReplaceValue || ''
+            );
+          }
         }
-        
+
         if (isMpa(config)) {
           if (moveHtmlTop) {
             htmlChunk.fileName = htmlName + '.html';
@@ -256,7 +267,7 @@ export default function htmlTemplate (userOptions: HtmlTemplateMpaOptions = {}):
         }
       }
     },
-    closeBundle () {
+    closeBundle() {
       const dest = (config.build && config.build.outDir) || 'dist';
       if (isMpa(config)) {
         shell.rm('-rf', resolve(`${dest}/index.html`));

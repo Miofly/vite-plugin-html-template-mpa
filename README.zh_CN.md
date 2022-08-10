@@ -27,20 +27,18 @@ pnpm add vite-plugin-html-template-mpa
 **vite.config.ts**
 
 ```typescript
-import htmlTemplate from 'vite-plugin-html-template-mpa'
+import htmlTemplate from 'vite-plugin-html-template-mpa';
 
 export default defineConfig({
-  plugins: [
-    htmlTemplate(/* options */),
-  ],
-})
+  plugins: [htmlTemplate(/* options */)]
+});
 ```
 
 多页应用
 **vite.config.ts**
 
 ```typescript
-import htmlTemplate from 'vite-plugin-html-template-mpa'
+import htmlTemplate from 'vite-plugin-html-template-mpa';
 
 export default defineConfig({
   plugins: [
@@ -64,9 +62,9 @@ export default defineConfig({
       data: {
         title: '默认标题'
       }
-    }),
-  ],
-})
+    })
+  ]
+});
 ```
 
 ## 配置参数
@@ -77,7 +75,7 @@ export interface Options {
    * 多页应用目录
    * @default src/pages
    */
-  pagesDir: string
+  pagesDir: string;
   /**
    * 多页应用配置
    * @see {@link https://cli.vuejs.org/config/#pages}
@@ -87,41 +85,41 @@ export interface Options {
       /**
        * @default public/index.html
        */
-      template?: string
+      template?: string;
       /**
        * 页面 title
        * @default 'Home Page'
        */
-      title?: string
+      title?: string;
       /**
        * 入口文件
        */
-      entry?: string
+      entry?: string;
       /**
        * 模板文件
        * @default '${pageName}/index.html' at dest
        */
-      filename?: string
+      filename?: string;
       /**
        * 根页面链接添加参数
        * @example id=12323&token=0000
        */
-      urlParams?: string
-    }
-  }
+      urlParams?: string;
+    };
+  };
   /**
    * 暴露于模板的数据
    * @default {}
    */
-  data: Record<string, any>
+  data: Record<string, any>;
   /**
    * @default '/src/main'
    */
-  entry?: string
+  entry?: string;
   /**
    * 多页应用程序主页跳转模式
    */
-  jumpTarget?: '_self' | '_blank'
+  jumpTarget?: '_self' | '_blank';
   buildCfg: {
     /**
      * 生成多页应用添加前缀
@@ -132,37 +130,44 @@ export interface Options {
      * 将生成的 index.html 提升至最顶层，并将 index.html 重命名为 多页应用名称.html
      * @default true
      */
-    moveHtmlTop?: boolean
+    moveHtmlTop?: boolean;
     /**
      * 将生成的 index.html 的父目录提升至最顶层
      * @default false
      */
-    moveHtmlDirTop?: boolean
+    moveHtmlDirTop?: boolean;
     /**
      * 对生成的 html 文件中的 js 与 css 添加唯一的 hash 值
      * @default false
      */
-    htmlHash?: boolean
+    htmlHash?: boolean;
     /**
      * 打包时对 asset 目录增加目录名
      */
-    buildAssetDirName: string
+    buildAssetDirName: string;
     /**
      * 打包时对 chunk 目录增加目录名
      */
-    buildChunkDirName: string
+    buildChunkDirName: string;
     /**
      * 打包时对 entry 目录增加目录名
      */
-    buildEntryDirName: string
-  },
+    buildEntryDirName: string;
+    /**
+     * 要替换生成的 html 中的原字符串（主要是打包的 base 路径处理）
+     */
+    htmlPrefixSearchValue?: string;
+    /**
+     * 替换后的字符串
+     */
+    htmlPrefixReplaceValue?: string;
+  };
   /**
    * html 压缩配置
    * @default true
    */
-  minify?: MinifyOptions | boolean
+  minify?: MinifyOptions | boolean;
 }
-
 ```
 
 ### 默认压缩配置

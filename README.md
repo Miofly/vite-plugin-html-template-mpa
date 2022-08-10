@@ -27,20 +27,18 @@ Single page application
 **vite.config.ts**
 
 ```typescript
-import htmlTemplate from 'vite-plugin-html-template-mpa'
+import htmlTemplate from 'vite-plugin-html-template-mpa';
 
 export default defineConfig({
-  plugins: [
-    htmlTemplate(/* options */),
-  ],
-})
+  plugins: [htmlTemplate(/* options */)]
+});
 ```
 
 Multi page application
 **vite.config.ts**
 
 ```typescript
-import htmlTemplate from 'vite-plugin-html-template-mpa'
+import htmlTemplate from 'vite-plugin-html-template-mpa';
 
 export default defineConfig({
   plugins: [
@@ -64,9 +62,9 @@ export default defineConfig({
       data: {
         title: 'defaultTitle'
       }
-    }),
-  ],
-})
+    })
+  ]
+});
 ```
 
 ## Options
@@ -77,7 +75,7 @@ export interface Options {
    * multi page application directory
    * @default src/pages
    */
-  pagesDir: string
+  pagesDir: string;
   /**
    * multi page application configuration
    * @see {@link https://cli.vuejs.org/config/#pages}
@@ -87,41 +85,41 @@ export interface Options {
       /**
        * @default public/index.html
        */
-      template?: string
+      template?: string;
       /**
        * page title
        * @default 'Home Page'
        */
-      title?: string
+      title?: string;
       /**
        * entry file
        */
-      entry?: string
+      entry?: string;
       /**
        * template file
        * @default '${pageName}/index.html' at dest
        */
-      filename?: string
+      filename?: string;
       /**
        * add parameters to the root page link
        * @example id=12323&token=0000
        */
-      urlParams?: string
-    }
-  }
+      urlParams?: string;
+    };
+  };
   /**
    * data exposed to the template
    * @default {}
    */
-  data: Record<string, any>
+  data: Record<string, any>;
   /**
    * @default '/src/main'
    */
-  entry?: string
+  entry?: string;
   /**
    * multi page application home page jump mode
    */
-  jumpTarget?: '_self' | '_blank'
+  jumpTarget?: '_self' | '_blank';
   buildCfg: {
     /**
      * generate multi page application add prefix
@@ -132,37 +130,44 @@ export interface Options {
      * The generated index HTML to the top, and index Rename HTML to multi page application name html
      * @default true
      */
-    moveHtmlTop?: boolean
+    moveHtmlTop?: boolean;
     /**
      * The generated index The parent directory of HTML is promoted to the top level
      * @default false
      */
-    moveHtmlDirTop?: boolean
+    moveHtmlDirTop?: boolean;
     /**
      * Add a hash to the resources in the generated HTML file
      * @default false
      */
-    htmlHash?: boolean
+    htmlHash?: boolean;
     /**
      * build asset dir add name
      */
-    buildAssetDirName: string
+    buildAssetDirName: string;
     /**
      * build chunk dir add name
      */
-    buildChunkDirName: string
+    buildChunkDirName: string;
     /**
      * build entry dir add name
      */
-    buildEntryDirName: string
-  },
+    buildEntryDirName: string;
+    /**
+     * To replace the original string in the generated html (mainly packaged base path processing)
+     */
+    htmlPrefixSearchValue?: string;
+    /**
+     * replace string
+     */
+    htmlPrefixReplaceValue?: string;
+  };
   /**
    * Minimize options
    * @default true
    */
-  minify?: MinifyOptions | boolean
+  minify?: MinifyOptions | boolean;
 }
-
 ```
 
 ### default compression configuration
@@ -192,5 +197,5 @@ multi page application
 
 - Cooperate with `vite-plugin-multi-pages` multi page application
   configuration: [https://github.com/Miofly/vite-plugin-multi-pages](https://github.com/Miofly/vite-plugin-multi-pages)
-- Cooperate with `vite-plugin-vconsole-mpa` to automatically configure '
-  vconsole'`: [https://github.com/Miofly/vite-plugin-vconsole-mpa](https://github.com/Miofly/vite-plugin-vconsole-mpa)
+- Cooperate with `vite-plugin-vconsole-mpa` to automatically configure
+  vconsole: [https://github.com/Miofly/vite-plugin-vconsole-mpa](https://github.com/Miofly/vite-plugin-vconsole-mpa)
