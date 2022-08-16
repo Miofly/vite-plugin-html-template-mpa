@@ -105,13 +105,12 @@ export interface Options {
        * @example id=12323&token=0000
        */
       urlParams?: string;
+      /**
+       * ejs 注入功能
+       */
+      injectOptions?: InjectOptions;
     };
   };
-  /**
-   * 暴露于模板的数据
-   * @default {}
-   */
-  data: Record<string, any>;
   /**
    * @default '/src/main'
    */
@@ -181,6 +180,47 @@ removeScriptTypeAttributes: true,
 removeStyleLinkTypeAttributes: true,
 useShortDoctype: true,
 minifyCSS: true,
+```
+
+### ejs 使用示例
+
+```javascript
+htmlTemplate({
+  pages: {
+    'app-nine': {
+      title: '测试',
+      /** 拼接到 url 后的参数 */
+      urlParams: 'id=211212&token=00000',
+      // 要在模板 html 中注入一些 js 等
+      // 在 public/index.hmtl 需要的位置添加上 <%if(typeof injectScript !== 'undefined'){%><%-injectScript%><%}%>
+      injectOptions: {
+        data: {
+          // 这是在模板中要注入的变量名称(自定义)，主要要在 index.hmtl 插入变量
+          injectScript: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
+          injectCss: '<link href = "static/pro-template/js/vue-963fdc09.js" >',
+          injectMeta: '<meta charset="UTF-8" />',
+
+          // 也可以用一个变量注入所有的，不要每个都定义
+          injectCode:
+            '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script><link href = "static/pro-template/js/vue-963fdc09.js" >'
+        }
+      }
+    },
+    'app-six': {
+      title: '第六个页面'
+    }
+  },
+  buildCfg: {
+    buildPrefixName: prefixName,
+    moveHtmlTop: true,
+    htmlHash: false,
+    buildAssetDirName: _pageName + '/asset',
+    buildChunkDirName: _pageName + '/js',
+    buildEntryDirName: _pageName + '/js'
+    // htmlPrefixSearchValue: '/static',
+    // htmlPrefixReplaceValue: 'static'
+  }
+});
 ```
 
 ## 使用示例

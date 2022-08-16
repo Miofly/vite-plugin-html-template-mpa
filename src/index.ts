@@ -3,7 +3,7 @@ import type { HtmlTemplateMpaOptions } from './types';
 import path from 'path';
 import shell from 'shelljs';
 import { last } from 'lodash';
-import { dfs, dfs2, getHtmlContent, isMpa, minifyHtml } from './utils';
+import { getHtmlContent, isMpa, minifyHtml } from './utils';
 import { name } from '../package.json';
 import { createHash } from 'crypto';
 import { OutputOptions } from 'rollup';
@@ -18,9 +18,6 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
   const options = {
     pagesDir: 'src/pages',
     pages: {},
-    data: {
-      title: 'Home Page'
-    },
     jumpTarget: '_self',
     buildCfg: {
       moveHtmlTop: true,
@@ -37,19 +34,6 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
     ...userOptions
   };
 
-  if (options.data) {
-    const rebuildData = {};
-    Object.keys(options.data).forEach((key) => {
-      const value = (options.data as any)[key];
-      if (key.includes('.')) {
-        const keys = key.split('.');
-        dfs(keys, value, rebuildData);
-      } else {
-        dfs2(rebuildData, key, value);
-      }
-    });
-    options.data = rebuildData;
-  }
   let config: ResolvedConfig;
   return {
     enforce: 'post',
@@ -114,8 +98,9 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             _output.entryFileNames = `${assetDir}/${buildEntryDirName}/[name]-[hash].js`;
           }
         }
+
         resolvedConfig.build.rollupOptions.output = {
-          ...resolvedConfig.build.rollupOptions.output,
+          ...(resolvedConfig.build.rollupOptions.output as any),
           ..._output
         };
       }
@@ -154,8 +139,8 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             templatePath,
             pageEntry: page.entry || 'main',
             pageTitle: page.title || '',
+            injectOptions: page.injectOptions,
             isMPA: isMpa(config),
-            data: options.data,
             entry: options.entry || '/src/main',
             extraData: {
               base: config.base,
@@ -219,7 +204,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             base: config.base,
             url: isMpa(config) ? idNoPrefix : '/'
           },
-          data: options.data,
+          injectOptions: page.injectOptions,
           entry: options.entry || '/src/main',
           input: config.build.rollupOptions.input,
           pages: options.pages

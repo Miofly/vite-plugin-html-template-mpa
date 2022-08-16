@@ -1,9 +1,10 @@
 import type { HtmlTemplateMpaOptions } from '../types';
 import { promises as fs } from 'fs';
-import { template } from 'lodash';
 import { ResolvedConfig } from 'vite';
 import type { Options as MinifyOptions } from 'html-minifier-terser';
 import { minify as minifyFn } from 'html-minifier-terser';
+import { render } from 'ejs';
+import { InjectOptions } from '../types';
 
 async function readHtmlTemplate(templatePath: string) {
   return await fs.readFile(templatePath, { encoding: 'utf8' });
@@ -16,7 +17,6 @@ interface Payload {
   pageEntry: string;
   pageTitle: string;
   isMPA: boolean;
-  data: HtmlTemplateMpaOptions['data'];
   entry: HtmlTemplateMpaOptions['entry'];
   extraData: {
     base: string;
@@ -28,6 +28,7 @@ interface Payload {
   origin?: string;
   hasUnocss?: boolean;
   hasMpaPlugin?: boolean;
+  injectOptions?: InjectOptions;
 }
 
 export async function getHtmlContent(payload: Payload) {
@@ -38,7 +39,6 @@ export async function getHtmlContent(payload: Payload) {
     pageTitle,
     pageEntry,
     isMPA,
-    data,
     entry,
     extraData,
     input,
@@ -46,7 +46,8 @@ export async function getHtmlContent(payload: Payload) {
     jumpTarget,
     origin,
     hasMpaPlugin,
-    hasUnocss
+    hasUnocss,
+    injectOptions
   } = payload;
   let content = '';
 
@@ -124,43 +125,25 @@ export async function getHtmlContent(payload: Payload) {
     } else {
       content = content.replace('</body>', `${links.join('').replace(/,/g, ' ')}\n</body>`);
     }
+
+    // content = content.replace(/<%-.*%>/g, '');
   } else {
     content = content.replace('</body>', `<script type="module" src="${entryJsPath}"></script></body>`);
   }
 
-  const compiled = template(content);
-
-  const context = {
-    htmlWebpackPlugin: {
-      options: {
-        title: pageTitle
-      },
-      tags: {
-        headTags: [],
-        bodyTags: []
-      },
-      files: {
-        publicPath: extraData.base,
-        js: [],
-        css: [],
-        manifest: '',
-        favicon: ''
-      }
-    },
-    webpackConfig: {
-      name: pageTitle,
-      output: {
-        publicPath: extraData.base
-      }
-    },
-    BASE_URL: extraData.base,
-    ...process.env,
-    ...data,
-    title: pageTitle || data?.title
+  const { data, ejsOptions } = injectOptions || {
+    data: {},
+    ejsOptions: {}
   };
-  return compiled({
-    ...context
-  });
+
+  return await render(
+    content,
+    {
+      title: pageTitle || '',
+      ...data
+    },
+    ejsOptions
+  );
 }
 
 export function dfs(keys: string[], value: any, res: Record<string, any>) {

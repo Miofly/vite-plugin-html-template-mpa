@@ -105,13 +105,12 @@ export interface Options {
        * @example id=12323&token=0000
        */
       urlParams?: string;
+      /**
+       * @description inject options
+       */
+      injectOptions?: InjectOptions;
     };
   };
-  /**
-   * data exposed to the template
-   * @default {}
-   */
-  data: Record<string, any>;
   /**
    * @default '/src/main'
    */
@@ -181,6 +180,47 @@ removeScriptTypeAttributes: true,
 removeStyleLinkTypeAttributes: true,
 useShortDoctype: true,
 minifyCSS: true,
+```
+
+### ejs usage example
+
+```javascript
+htmlTemplate({
+  pages: {
+    'app-nine': {
+      title: 'test',
+      /** Parameters after splicing to URL */
+      urlParams: 'id=211212&token=00000',
+      // To inject some JS into the template HTML
+      // in public/index.hmtl add the required location <%if(typeof injectScript !== 'undefined'){%><%-injectScript%><%}%>
+      injectOptions: {
+        data: {
+          // This is the variable name (custom) to be injected in the template, mainly in the index : hmtl inserting variables
+          injectScript: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
+          injectCss: '<link href = "static/pro-template/js/vue-963fdc09.js" >',
+          injectMeta: '<meta charset="UTF-8" />',
+
+          // You can also inject all with one variable instead of defining each
+          injectCode:
+            '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script><link href = "static/pro-template/js/vue-963fdc09.js" >'
+        }
+      }
+    },
+    'app-six': {
+      title: 'sixthPage'
+    }
+  },
+  buildCfg: {
+    buildPrefixName: prefixName,
+    moveHtmlTop: true,
+    htmlHash: false,
+    buildAssetDirName: _pageName + '/asset',
+    buildChunkDirName: _pageName + '/js',
+    buildEntryDirName: _pageName + '/js'
+    // htmlPrefixSearchValue: '/static',
+    // htmlPrefixReplaceValue: 'static'
+  }
+});
 ```
 
 ## use examples

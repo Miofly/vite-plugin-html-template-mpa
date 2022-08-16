@@ -1,4 +1,18 @@
 import type { Options as MinifyOptions } from 'html-minifier-terser';
+import type { HtmlTagDescriptor } from 'vite';
+import type { Options as EJSOptions } from 'ejs';
+
+export interface InjectOptions {
+  /**
+   *  @description Data injected into the html template
+   */
+  data?: Record<string, any>;
+  tags?: HtmlTagDescriptor[];
+  /**
+   * @description esj options configuration
+   */
+  ejsOptions?: EJSOptions;
+}
 
 export interface Options {
   /**
@@ -35,13 +49,12 @@ export interface Options {
        * @example id=12323&token=0000
        */
       urlParams?: string;
+      /**
+       * @description inject options
+       */
+      injectOptions?: InjectOptions;
     };
   };
-  /**
-   * data exposed to the template
-   * @default {}
-   */
-  data: Record<string, any>;
   /**
    * @default '/src/main'
    */

@@ -11,9 +11,9 @@
     "vue": "^3.2.37"
   },
   "devDependencies": {
-    "vite-plugin-multi-pages": "^0.0.8",
-    "@vitejs/plugin-vue": "^3.0.1",
+    "vite-plugin-multi-pages": "^0.0.10",
+    "@vitejs/plugin-vue": "^3.0.2",
     "typescript": "^4.7.4",
-    "vite": "3.0.4"
+    "vite": "3.0.6"
   }
 }
