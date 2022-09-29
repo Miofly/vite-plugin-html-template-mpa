@@ -199,10 +199,9 @@ htmlTemplate({
           injectScript: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
           injectCss: '<link href = "static/pro-template/js/vue-963fdc09.js" >',
           injectMeta: '<meta charset="UTF-8" />',
-          
+
           // 也可以用一个变量注入所有的，不要每个都定义
-          injectCode:
-            '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script><link href = "static/pro-template/js/vue-963fdc09.js" >'
+          injectCode: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script><link href = "static/pro-template/js/vue-963fdc09.js" >'
         }
       }
     },

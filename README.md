@@ -199,10 +199,9 @@ htmlTemplate({
           injectScript: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
           injectCss: '<link href = "static/pro-template/js/vue-963fdc09.js" >',
           injectMeta: '<meta charset="UTF-8" />',
-          
+
           // You can also inject all with one variable instead of defining each
-          injectCode:
-            '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script><link href = "static/pro-template/js/vue-963fdc09.js" >'
+          injectCode: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script><link href = "static/pro-template/js/vue-963fdc09.js" >'
         }
       }
     },
