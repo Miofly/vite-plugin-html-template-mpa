@@ -122,7 +122,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             return url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index';
           })();
 
-          const httpName = config.server.https ? 'https://' : 'http://';
+          // const httpName = config.server.https ? 'https://' : 'http://';
           const page = options.pages[pageName] || {};
 
           const templateOption = page.template;
@@ -150,8 +150,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             pages: options.pages,
             jumpTarget: options.jumpTarget,
             hasUnocss: JSON.stringify(config.plugins).includes('unocss'),
-            hasMpaPlugin: JSON.stringify(config.plugins).includes('vite-plugin-multi-pages'),
-            origin: httpName + req.headers.host
+            hasMpaPlugin: JSON.stringify(config.plugins).includes('vite-plugin-multi-pages')
           });
 
           content = await server.transformIndexHtml?.(url, content, req.originalUrl);

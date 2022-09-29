@@ -1,8 +1,8 @@
 {
   "name": "vite-plugin-html-template-mpa",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "html template map for vite",
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -24,18 +24,18 @@
   "license": "MIT",
   "dependencies": {
     "ejs": "^3.1.8",
-    "html-minifier-terser": "7.0.0-beta.0",
+    "html-minifier-terser": "7.0.0",
     "shelljs": "0.8.5"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.1",
-    "@types/html-minifier-terser": "^6.1.0",
-    "@types/lodash": "^4.14.182",
+    "@types/html-minifier-terser": "^7.0.0",
+    "@types/lodash": "^4.14.185",
     "@types/shelljs": "0.8.11",
     "lodash": "^4.17.21",
-    "tsup": "6.2.1",
-    "typescript": "4.7.4",
-    "vite": "3.0.6"
+    "tsup": "6.2.3",
+    "typescript": "4.8.3",
+    "vite": "3.1.1"
   },
   "homepage": "https://github.com/Miofly/vite-plugin-html-template-mpa",
   "repository": {
