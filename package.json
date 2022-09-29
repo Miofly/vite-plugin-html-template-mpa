@@ -7,7 +7,11 @@
   "files": [
     "dist"
   ],
-  "author": "953212389@qq.com",
+  "author": {
+    "name": "wfly",
+    "email": "953212389@qq.com",
+    "url": "https://wflynn.cn/"
+  },
   "scripts": {
     "build": "tsup src/index.ts --dts",
     "test": "cd example/vite-plugin-demo && pnpm i && pnpm dev",
@@ -41,5 +45,11 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:Miofly/vite-plugin-html-template-mpa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Miofly/vite-plugin-html-template-mpa/issues"
+  },
+  "engines": {
+    "node": ">=16"
   }
 }
