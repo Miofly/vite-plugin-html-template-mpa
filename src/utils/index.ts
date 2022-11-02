@@ -1,10 +1,10 @@
 import type { HtmlTemplateMpaOptions } from '../types';
 import { promises as fs } from 'fs';
-import { ResolvedConfig } from 'vite';
+import type { ResolvedConfig } from 'vite';
 import type { Options as MinifyOptions } from 'html-minifier-terser';
 import { minify as minifyFn } from 'html-minifier-terser';
 import { render } from 'ejs';
-import { InjectOptions } from '../types';
+import { type InjectOptions } from '../types';
 
 async function readHtmlTemplate(templatePath: string) {
   return await fs.readFile(templatePath, { encoding: 'utf8' });

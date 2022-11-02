@@ -6,7 +6,7 @@ import { last } from 'lodash';
 import { getHtmlContent, isMpa, minifyHtml } from './utils';
 import { name } from '../package.json';
 import { createHash } from 'crypto';
-import { OutputOptions } from 'rollup';
+import type { OutputOptions } from 'rollup';
 
 const resolve = (p: string) => path.resolve(process.cwd(), p);
 
