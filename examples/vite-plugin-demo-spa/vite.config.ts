@@ -12,7 +12,19 @@ export default defineConfig({
       minify: true,
       buildCfg: {
         htmlHash: true
-      }
+      },
+      pages: {
+        'index': {
+          title: '测试标题',
+          urlParams: 'id=33',
+          injectOptions: {
+            data: {
+              // This is the variable name (custom) to be injected in the template, mainly in the index : hmtl inserting variables
+              injectScript: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
+            }
+          }
+        }
+      },
     })
   ]
 });

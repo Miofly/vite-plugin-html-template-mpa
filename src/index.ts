@@ -122,8 +122,11 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             return url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index';
           })();
 
+
+
           // const httpName = config.server.https ? 'https://' : 'http://';
           const page = options.pages[pageName] || {};
+          console.log(options.pages, 'options.pages', pageName, page);
 
           const templateOption = page.template;
 
@@ -202,7 +205,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
       return null;
     },
     async generateBundle(_, bundle) {
-      const htmlFiles = Object.keys(bundle).filter((i) => i.endsWith('.html'));
+      const htmlFiles = Object.keys(bundle).filter(i => i.endsWith('.html'));
 
       for (const item of htmlFiles) {
         const htmlChunk = bundle[item] as any;
