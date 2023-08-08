@@ -50,7 +50,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
         if (buildPrefixName) {
           const _input = {} as any;
           const rollupInput = resolvedConfig.build.rollupOptions.input as any;
-          Object.keys(rollupInput).map((key) => {
+          Object.keys(rollupInput).map(key => {
             _input[((isBuild ? buildPrefixName : '') || '') + key] = rollupInput[key];
           });
           resolvedConfig.build.rollupOptions.input = _input;
@@ -122,15 +122,17 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             return url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index';
           })();
 
-
-
           // const httpName = config.server.https ? 'https://' : 'http://';
           const page = options.pages[pageName] || {};
           console.log(options.pages, 'options.pages', pageName, page);
 
           const templateOption = page.template;
 
-          const templatePath = templateOption ? resolve(templateOption) : isMpa(config) ? resolve('public/index.html') : resolve('index.html');
+          const templatePath = templateOption
+            ? resolve(templateOption)
+            : isMpa(config)
+            ? resolve('public/index.html')
+            : resolve('index.html');
 
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
@@ -169,7 +171,9 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
 
           for (const key in _inputCfg) {
             if (_inputCfg?.[key] === id) {
-              return isWin32 ? id.replace(/\\/g, '/') : `${PREFIX}/${options.pagesDir.replace('src/', '')}/${pageName}/index.html`;
+              return isWin32
+                ? id.replace(/\\/g, '/')
+                : `${PREFIX}/${options.pagesDir.replace('src/', '')}/${pageName}/index.html`;
             }
           }
         }
@@ -183,7 +187,11 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
 
         const page = options.pages[pageName] || {};
         const templateOption = page.template;
-        const templatePath = templateOption ? resolve(templateOption) : isMpa(config) ? resolve('public/index.html') : resolve('index.html');
+        const templatePath = templateOption
+          ? resolve(templateOption)
+          : isMpa(config)
+          ? resolve('public/index.html')
+          : resolve('index.html');
 
         return getHtmlContent({
           pagesDir: options.pagesDir,
@@ -226,7 +234,10 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
           }
 
           if (options?.buildCfg?.htmlPrefixSearchValue) {
-            htmlChunk.source = htmlChunk.source.replace(new RegExp(options.buildCfg.htmlPrefixSearchValue, 'g'), options?.buildCfg?.htmlPrefixReplaceValue || '');
+            htmlChunk.source = htmlChunk.source.replace(
+              new RegExp(options.buildCfg.htmlPrefixSearchValue, 'g'),
+              options?.buildCfg?.htmlPrefixReplaceValue || ''
+            );
           }
         }
 

@@ -31,7 +31,22 @@ interface Payload {
 }
 
 export async function getHtmlContent(payload: Payload) {
-  const { pagesDir, templatePath, pageName, pageTitle, pageEntry, isMPA, entry, extraData, input, pages, jumpTarget, hasMpaPlugin, hasUnocss, injectOptions } = payload;
+  const {
+    pagesDir,
+    templatePath,
+    pageName,
+    pageTitle,
+    pageEntry,
+    isMPA,
+    entry,
+    extraData,
+    input,
+    pages,
+    jumpTarget,
+    hasMpaPlugin,
+    hasUnocss,
+    injectOptions
+  } = payload;
   let content = '';
 
   /**
@@ -44,7 +59,9 @@ export async function getHtmlContent(payload: Payload) {
       if (pageEntry.includes('src')) {
         return `/${pageEntry.replace('/./', '/').replace('//', '/')}`;
       }
-      return ['/', '/index.html'].includes(extraData.url) ? `/${pagesDir}/index/${pageEntry}` : `/${pagesDir}/${pageName}/${pageEntry}`;
+      return ['/', '/index.html'].includes(extraData.url)
+        ? `/${pagesDir}/index/${pageEntry}`
+        : `/${pagesDir}/${pageName}/${pageEntry}`;
     }
     return entry;
   })();
@@ -85,7 +102,7 @@ export async function getHtmlContent(payload: Payload) {
     return !hasMpaPlugin ? `/${pagesDir}/${item}/index.html${_params}` : `/${item}/index.html${_params}`;
   }
 
-  const links = inputKeys.map((item) => {
+  const links = inputKeys.map(item => {
     if (pagesKeys.includes(item)) {
       const href = getHref(item, pages[item].urlParams);
       return `<a target="${jumpTarget}" href="${href}">${pages[item].title || ''} ${item}</a><br />`;
