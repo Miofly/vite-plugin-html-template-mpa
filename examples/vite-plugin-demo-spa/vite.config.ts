@@ -4,14 +4,14 @@ import htmlTemplate from '../../src';
 
 export default defineConfig({
   server: {
-    open: true
+    open: true,
   },
   plugins: [
     vue(),
     htmlTemplate({
       minify: true,
       buildCfg: {
-        htmlHash: true
+        htmlHash: true,
       },
       pages: {
         index: {
@@ -20,11 +20,12 @@ export default defineConfig({
           injectOptions: {
             data: {
               // This is the variable name (custom) to be injected in the template, mainly in the index : hmtl inserting variables
-              injectScript: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>'
-            }
-          }
-        }
-      }
-    })
-  ]
+              injectScript:
+                '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
+            },
+          },
+        },
+      },
+    }),
+  ],
 });

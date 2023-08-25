@@ -12,9 +12,14 @@ const resolve = (p: string) => path.resolve(process.cwd(), p);
 
 const PREFIX = 'src';
 const isWin32 = require('os').platform() === 'win32';
-const uniqueHash = createHash('sha256').update(String(new Date().getTime())).digest('hex').substring(0, 16);
+const uniqueHash = createHash('sha256')
+  .update(String(new Date().getTime()))
+  .digest('hex')
+  .substring(0, 16);
 
-export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
+export default function htmlTemplate(
+  userOptions: HtmlTemplateMpaOptions = {},
+): Plugin {
   const options = {
     pagesDir: 'src/pages',
     pages: {},
@@ -28,10 +33,10 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
       buildChunkDirName: '',
       buildEntryDirName: '',
       htmlPrefixSearchValue: '',
-      htmlPrefixReplaceValue: ''
+      htmlPrefixReplaceValue: '',
     },
     minify: true,
-    ...userOptions
+    ...userOptions,
   };
 
   let config: ResolvedConfig;
@@ -41,17 +46,25 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
     configResolved(resolvedConfig) {
       const isBuild = resolvedConfig.mode === 'production';
 
-      const { buildPrefixName, htmlHash, buildAssetDirName, buildChunkDirName, buildEntryDirName } = options.buildCfg;
+      const {
+        buildPrefixName,
+        htmlHash,
+        buildAssetDirName,
+        buildChunkDirName,
+        buildEntryDirName,
+      } = options.buildCfg;
       const assetDir = resolvedConfig.build.assetsDir || 'assets';
 
       if (isMpa(resolvedConfig)) {
-        const _output = resolvedConfig.build.rollupOptions.output as OutputOptions;
+        const _output = resolvedConfig.build.rollupOptions
+          .output as OutputOptions;
 
         if (buildPrefixName) {
           const _input = {} as any;
           const rollupInput = resolvedConfig.build.rollupOptions.input as any;
           Object.keys(rollupInput).map(key => {
-            _input[((isBuild ? buildPrefixName : '') || '') + key] = rollupInput[key];
+            _input[((isBuild ? buildPrefixName : '') || '') + key] =
+              rollupInput[key];
           });
           resolvedConfig.build.rollupOptions.input = _input;
         }
@@ -60,7 +73,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
           const buildAssets = {
             entryFileNames: `${assetDir}/[name].js`,
             chunkFileNames: `${assetDir}/[name].js`,
-            assetFileNames: `${assetDir}/[name].[ext]`
+            assetFileNames: `${assetDir}/[name].[ext]`,
           };
 
           const buildOutput = resolvedConfig.build.rollupOptions.output;
@@ -68,7 +81,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
           if (buildOutput) {
             resolvedConfig.build.rollupOptions.output = {
               ...buildOutput,
-              ...buildAssets
+              ...buildAssets,
             };
           } else {
             resolvedConfig.build.rollupOptions.output = buildAssets;
@@ -101,7 +114,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
 
         resolvedConfig.build.rollupOptions.output = {
           ...(resolvedConfig.build.rollupOptions.output as any),
-          ..._output
+          ..._output,
         };
       }
       config = resolvedConfig;
@@ -119,7 +132,9 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             if (url === '/') {
               return 'index';
             }
-            return url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index';
+            return (
+              url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index'
+            );
           })();
 
           // const httpName = config.server.https ? 'https://' : 'http://';
@@ -145,16 +160,22 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             entry: options.entry || '/src/main',
             extraData: {
               base: config.base,
-              url
+              url,
             },
             input: config.build.rollupOptions.input,
             pages: options.pages,
             jumpTarget: options.jumpTarget,
             hasUnocss: JSON.stringify(config.plugins).includes('unocss'),
-            hasMpaPlugin: JSON.stringify(config.plugins).includes('vite-plugin-multi-pages')
+            hasMpaPlugin: JSON.stringify(config.plugins).includes(
+              'vite-plugin-multi-pages',
+            ),
           });
 
-          content = await server.transformIndexHtml?.(url, content, req.originalUrl);
+          content = await server.transformIndexHtml?.(
+            url,
+            content,
+            req.originalUrl,
+          );
 
           res.end(content);
         });
@@ -165,7 +186,8 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
         if (!isMpa(config)) {
           return `${PREFIX}/${path.basename(id)}`;
         } else {
-          const pageName = last(path.dirname(id).split(isWin32 ? '\\' : '/')) || '';
+          const pageName =
+            last(path.dirname(id).split(isWin32 ? '\\' : '/')) || '';
 
           const _inputCfg: any = config.build.rollupOptions.input;
 
@@ -173,7 +195,10 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
             if (_inputCfg?.[key] === id) {
               return isWin32
                 ? id.replace(/\\/g, '/')
-                : `${PREFIX}/${options.pagesDir.replace('src/', '')}/${pageName}/index.html`;
+                : `${PREFIX}/${options.pagesDir.replace(
+                    'src/',
+                    '',
+                  )}/${pageName}/index.html`;
             }
           }
         }
@@ -181,7 +206,12 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
       return null;
     },
     load(id) {
-      if (isWin32 ? id.startsWith(resolve('').replace(/\\/g, '/')) && id.endsWith('.html') : id.startsWith(PREFIX)) {
+      if (
+        isWin32
+          ? id.startsWith(resolve('').replace(/\\/g, '/')) &&
+            id.endsWith('.html')
+          : id.startsWith(PREFIX)
+      ) {
         const idNoPrefix = id.slice(PREFIX.length);
         const pageName = last(path.dirname(id).split('/')) || '';
 
@@ -202,12 +232,12 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
           isMPA: isMpa(config),
           extraData: {
             base: config.base,
-            url: isMpa(config) ? idNoPrefix : '/'
+            url: isMpa(config) ? idNoPrefix : '/',
           },
           injectOptions: page.injectOptions,
           entry: options.entry || '/src/main',
           input: config.build.rollupOptions.input,
-          pages: options.pages
+          pages: options.pages,
         });
       }
       return null;
@@ -217,15 +247,19 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
 
       for (const item of htmlFiles) {
         const htmlChunk = bundle[item] as any;
-        const { moveHtmlTop, moveHtmlDirTop, buildPrefixName, htmlHash } = options.buildCfg;
+        const { moveHtmlTop, moveHtmlDirTop, buildPrefixName, htmlHash } =
+          options.buildCfg;
         const _pageName = htmlChunk.fileName.replace(/\\/g, '/').split('/');
-        const htmlName = (buildPrefixName || '') + _pageName[_pageName.length - 2];
+        const htmlName =
+          (buildPrefixName || '') + _pageName[_pageName.length - 2];
 
         if (htmlChunk) {
           let _source = htmlChunk.source;
 
           if (htmlHash) {
-            _source = htmlChunk.source.replace(/\.js/g, `.js?${uniqueHash}`).replace(/.css/g, `.css?${uniqueHash}`);
+            _source = htmlChunk.source
+              .replace(/\.js/g, `.js?${uniqueHash}`)
+              .replace(/.css/g, `.css?${uniqueHash}`);
           }
           if (options.minify) {
             htmlChunk.source = await minifyHtml(_source, options.minify);
@@ -236,7 +270,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
           if (options?.buildCfg?.htmlPrefixSearchValue) {
             htmlChunk.source = htmlChunk.source.replace(
               new RegExp(options.buildCfg.htmlPrefixSearchValue, 'g'),
-              options?.buildCfg?.htmlPrefixReplaceValue || ''
+              options?.buildCfg?.htmlPrefixReplaceValue || '',
             );
           }
         }
@@ -257,7 +291,7 @@ export default function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): 
       if (isMpa(config)) {
         shell.rm('-rf', resolve(`${dest}/index.html`));
       }
-    }
+    },
   };
 }
 

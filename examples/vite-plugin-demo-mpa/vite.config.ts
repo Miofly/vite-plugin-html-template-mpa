@@ -7,28 +7,28 @@ export default defineConfig({
   plugins: [
     vue(),
     mpa({
-      scanDir: 'src/views'
+      scanDir: 'src/views',
     }),
     htmlTemplate({
       pagesDir: 'src/views',
       pages: {
         'test-one': {
           title: '测试标题',
-          urlParams: 'id=33'
+          urlParams: 'id=33',
         },
         'test-twos': {
-          urlParams: 'id=33'
-        }
+          urlParams: 'id=33',
+        },
       },
       buildCfg: {
         moveHtmlTop: true,
         moveHtmlDirTop: false,
         buildPrefixName: '',
-        htmlHash: true
+        htmlHash: true,
       },
       data: {
-        title: '默认标题'
-      }
-    })
-  ]
+        title: '默认标题',
+      },
+    }),
+  ],
 });

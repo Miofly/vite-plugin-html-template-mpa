@@ -45,7 +45,7 @@ export async function getHtmlContent(payload: Payload) {
     jumpTarget,
     hasMpaPlugin,
     hasUnocss,
-    injectOptions
+    injectOptions,
   } = payload;
   let content = '';
 
@@ -99,15 +99,21 @@ export async function getHtmlContent(payload: Payload) {
 
   function getHref(item: string, params?: string) {
     const _params = params ? '?' + params : '';
-    return !hasMpaPlugin ? `/${pagesDir}/${item}/index.html${_params}` : `/${item}/index.html${_params}`;
+    return !hasMpaPlugin
+      ? `/${pagesDir}/${item}/index.html${_params}`
+      : `/${item}/index.html${_params}`;
   }
 
   const links = inputKeys.map(item => {
     if (pagesKeys.includes(item)) {
       const href = getHref(item, pages[item].urlParams);
-      return `<a target="${jumpTarget}" href="${href}">${pages[item].title || ''} ${item}</a><br />`;
+      return `<a target="${jumpTarget}" href="${href}">${
+        pages[item].title || ''
+      } ${item}</a><br />`;
     }
-    return `<a target="${jumpTarget}" href="${getHref(item)}">${item}</a><br />`;
+    return `<a target="${jumpTarget}" href="${getHref(
+      item,
+    )}">${item}</a><br />`;
   });
 
   // 对主页 or / 的 index.html 进行 content 内容替换
@@ -116,29 +122,35 @@ export async function getHtmlContent(payload: Payload) {
       content = content.replace(
         '</body>',
         `${links.join('').replace(/,/g, ' ')}
-    <script type="module">import 'uno.css';</script>\n</body>`
+    <script type="module">import 'uno.css';</script>\n</body>`,
       );
     } else {
-      content = content.replace('</body>', `${links.join('').replace(/,/g, ' ')}\n</body>`);
+      content = content.replace(
+        '</body>',
+        `${links.join('').replace(/,/g, ' ')}\n</body>`,
+      );
     }
 
     // content = content.replace(/<%-.*%>/g, '');
   } else {
-    content = content.replace('</body>', `<script type="module" src="${entryJsPath}"></script></body>`);
+    content = content.replace(
+      '</body>',
+      `<script type="module" src="${entryJsPath}"></script></body>`,
+    );
   }
 
   const { data, ejsOptions } = injectOptions || {
     data: {},
-    ejsOptions: {}
+    ejsOptions: {},
   };
 
   return await render(
     content,
     {
       title: pageTitle || '',
-      ...data
+      ...data,
     },
-    ejsOptions
+    ejsOptions,
   );
 }
 
@@ -156,11 +168,14 @@ function getOptions(minify: boolean): MinifyOptions {
     removeScriptTypeAttributes: minify,
     removeStyleLinkTypeAttributes: minify,
     useShortDoctype: minify,
-    minifyCSS: minify
+    minifyCSS: minify,
   };
 }
 
-export async function minifyHtml(html: string, minify: boolean | MinifyOptions) {
+export async function minifyHtml(
+  html: string,
+  minify: boolean | MinifyOptions,
+) {
   if (typeof minify === 'boolean' && !minify) {
     return html;
   }
