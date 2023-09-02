@@ -2,19 +2,28 @@
   "name": "vite-plugin-html-template-mpa",
   "version": "0.0.19",
   "description": "html template map for vite",
+  "keywords": [
+    "vite-plugin",
+    "mpa",
+    "MPA",
+    "multi-page",
+    "html-template"
+  ],
   "license": "MIT",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.cjs",
+      "require": "./dist/index.js",
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
     }
   },
   "publishConfig": {
-    "main": "dist/index.js"
+    "main": "dist/index.js",
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "scripts": {
     "stub": "unbuild --stub",
@@ -37,13 +46,6 @@
     "vite": "^2.0.0 || ^3.0.0 || ^4.0.0",
     "typescript": ">=4.0.0"
   },
-  "keywords": [
-    "vite-plugin",
-    "mpa",
-    "MPA",
-    "multi-page",
-    "html-template"
-  ],
   "dependencies": {
     "ejs": "^3.1.8",
     "html-minifier-terser": "7.0.0",
@@ -51,12 +53,12 @@
   },
   "devDependencies": {
     "unbuild": "2.0.0",
+    "@vft/tsconfig": "*",
     "@types/ejs": "^3.1.1",
     "@types/html-minifier-terser": "^7.0.0",
     "@types/lodash": "^4.14.186",
     "@types/shelljs": "0.8.11",
-    "lodash": "^4.17.21",
-    "@vft/tsconfig": "*"
+    "lodash": "^4.17.21"
   },
   "homepage": "https://github.com/Miofly/vite-plugin-html-template-mpa",
   "repository": {
