@@ -2,22 +2,39 @@
   "name": "vite-plugin-html-template-mpa",
   "version": "0.0.19",
   "description": "html template map for vite",
-  "type": "commonjs",
-  "main": "src/index.ts",
+  "license": "MIT",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "publishConfig": {
+    "main": "dist/index.js"
+  },
+  "scripts": {
+    "stub": "unbuild --stub",
+    "dev": "pnpm stub",
+    "build": "pnpm clean:dist && pnpm -F @vft/script test",
+    "pub": "pnpm build &&  tsx ../../scripts/build/src/publish.ts --pkg vite-plugin/vite-plugin-html-template-mpa",
+    "clean": "pnpm /^clean:/",
+    "clean:dist": "rimraf dist",
+    "clean:node_modules": "rimraf node_modules"
+  },
   "files": [
     "dist"
   ],
   "author": {
     "name": "wfly",
-    "email": "953212389@qq.com",
-    "url": "https://wflynn.cn/"
+    "url": "https://github.com/Miofly",
+    "email": "953212389@qq.com"
   },
-  "scripts": {
-    "build": "pnpm stub",
-    "stub": "unbuild --stub",
-    "test": "cd example/vite-plugin-demo && pnpm i && pnpm dev",
-    "pub": "npm version patch && pnpm build && npm publish --no-git-checks"
+  "peerDependencies": {
+    "vite": "^2.0.0 || ^3.0.0 || ^4.0.0"
   },
   "keywords": [
     "vite-plugin",
@@ -26,7 +43,6 @@
     "multi-page",
     "html-template"
   ],
-  "license": "MIT",
   "dependencies": {
     "ejs": "^3.1.8",
     "html-minifier-terser": "7.0.0",
@@ -39,8 +55,7 @@
     "@types/lodash": "^4.14.186",
     "@types/shelljs": "0.8.11",
     "lodash": "^4.17.21",
-    "typescript": "4.8.4",
-    "vite": "4.4.8"
+    "typescript": "4.8.4"
   },
   "homepage": "https://github.com/Miofly/vite-plugin-html-template-mpa",
   "repository": {
@@ -49,8 +64,5 @@
   },
   "bugs": {
     "url": "https://github.com/Miofly/vite-plugin-html-template-mpa/issues"
-  },
-  "engines": {
-    "node": ">=16"
   }
 }

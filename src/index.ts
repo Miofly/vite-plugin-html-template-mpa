@@ -11,7 +11,7 @@ import type { OutputOptions } from 'rollup';
 const resolve = (p: string) => path.resolve(process.cwd(), p);
 
 const PREFIX = 'src';
-const isWin32 = require('os').platform() === 'win32';
+const isWin32 = false;
 const uniqueHash = createHash('sha256')
   .update(String(new Date().getTime()))
   .digest('hex')
@@ -139,7 +139,6 @@ export default function htmlTemplate(
 
           // const httpName = config.server.https ? 'https://' : 'http://';
           const page = options.pages[pageName] || {};
-          console.log(options.pages, 'options.pages', pageName, page);
 
           const templateOption = page.template;
 
@@ -165,8 +164,8 @@ export default function htmlTemplate(
             input: config.build.rollupOptions.input,
             pages: options.pages,
             jumpTarget: options.jumpTarget,
-            hasUnocss: JSON.stringify(config.plugins).includes('unocss'),
-            hasMpaPlugin: JSON.stringify(config.plugins).includes(
+            hasUnocss: String(config.plugins).includes('unocss'),
+            hasMpaPlugin: String(config.plugins).includes(
               'vite-plugin-multi-pages',
             ),
           });
