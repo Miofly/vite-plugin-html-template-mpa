@@ -34,7 +34,8 @@
     "email": "953212389@qq.com"
   },
   "peerDependencies": {
-    "vite": "^2.0.0 || ^3.0.0 || ^4.0.0"
+    "vite": "^2.0.0 || ^3.0.0 || ^4.0.0",
+    "typescript": ">=4.0.0"
   },
   "keywords": [
     "vite-plugin",
@@ -55,7 +56,7 @@
     "@types/lodash": "^4.14.186",
     "@types/shelljs": "0.8.11",
     "lodash": "^4.17.21",
-    "typescript": "4.8.4"
+    "@vft/tsconfig": "*"
   },
   "homepage": "https://github.com/Miofly/vite-plugin-html-template-mpa",
   "repository": {
