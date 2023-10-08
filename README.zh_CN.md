@@ -30,7 +30,7 @@ pnpm add vite-plugin-html-template-mpa
 import htmlTemplate from 'vite-plugin-html-template-mpa';
 
 export default defineConfig({
-  plugins: [htmlTemplate(/* options */)]
+  plugins: [htmlTemplate(/* options */)],
 });
 ```
 
@@ -47,23 +47,23 @@ export default defineConfig({
       pages: {
         'test-one': {
           title: '测试标题',
-          urlParams: 'id=33'
+          urlParams: 'id=33',
         },
         'test-twos': {
-          urlParams: 'id=33'
-        }
+          urlParams: 'id=33',
+        },
       },
       buildCfg: {
         moveHtmlTop: true,
         moveHtmlDirTop: false,
         buildPrefixName: '',
-        htmlHash: true
+        htmlHash: true,
       },
       data: {
-        title: '默认标题'
-      }
-    })
-  ]
+        title: '默认标题',
+      },
+    }),
+  ],
 });
 ```
 
@@ -196,18 +196,20 @@ htmlTemplate({
       injectOptions: {
         data: {
           // 这是在模板中要注入的变量名称(自定义)，主要要在 index.hmtl 插入变量
-          injectScript: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
+          injectScript:
+            '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
           injectCss: '<link href = "static/pro-template/js/vue-963fdc09.js" >',
           injectMeta: '<meta charset="UTF-8" />',
 
           // 也可以用一个变量注入所有的，不要每个都定义
-          injectCode: '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script><link href = "static/pro-template/js/vue-963fdc09.js" >'
-        }
-      }
+          injectCode:
+            '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script><link href = "static/pro-template/js/vue-963fdc09.js" >',
+        },
+      },
     },
     'app-six': {
-      title: '第六个页面'
-    }
+      title: '第六个页面',
+    },
   },
   buildCfg: {
     buildPrefixName: prefixName,
@@ -215,10 +217,10 @@ htmlTemplate({
     htmlHash: false,
     buildAssetDirName: _pageName + '/asset',
     buildChunkDirName: _pageName + '/js',
-    buildEntryDirName: _pageName + '/js'
+    buildEntryDirName: _pageName + '/js',
     // htmlPrefixSearchValue: '/static',
     // htmlPrefixReplaceValue: 'static'
-  }
+  },
 });
 ```
 
