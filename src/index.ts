@@ -148,6 +148,8 @@ export default function htmlTemplate(
             ? resolve('public/index.html')
             : resolve('index.html');
 
+          const plugins = config.plugins.map(plugin => plugin.name)
+
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
             pageName,
@@ -164,8 +166,8 @@ export default function htmlTemplate(
             input: config.build.rollupOptions.input,
             pages: options.pages,
             jumpTarget: options.jumpTarget,
-            hasUnocss: String(config.plugins).includes('unocss'),
-            hasMpaPlugin: String(config.plugins).includes(
+            hasUnocss: plugins.includes('unocss'),
+            hasMpaPlugin: plugins.includes(
               'vite-plugin-multi-pages',
             ),
           });
