@@ -13,18 +13,20 @@ export default defineConfig({
       buildCfg: {
         htmlHash: true,
       },
-      pages: {
-        index: {
-          title: '测试标题',
-          urlParams: 'id=33',
-          injectOptions: {
-            data: {
-              // This is the variable name (custom) to be injected in the template, mainly in the index : hmtl inserting variables
-              injectScript:
-                '<script src="static/pro-template/js/test-one-11c3eaa8.js"></script>',
+      inject: {
+        data: {
+          title: '我是标题',
+          injectScript: `<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.common.js"></script>`,
+        },
+        tags: [
+          {
+            injectTo: 'body-prepend',
+            tag: 'div',
+            attrs: {
+              id: 'tag',
             },
           },
-        },
+        ],
       },
     }),
   ],

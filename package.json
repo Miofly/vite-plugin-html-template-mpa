@@ -43,7 +43,7 @@
     "email": "953212389@qq.com"
   },
   "peerDependencies": {
-    "vite": "2.0.0 || ^3.0.0 || ^4.0.0",
+    "vite": ">=2.0.0",
     "typescript": ">=4.0.0"
   },
   "dependencies": {

@@ -1,8 +1,8 @@
 import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
-import type { HtmlTemplateMpaOptions } from './types';
+import type { HtmlTemplateMpaOptions, PageOptions } from './types';
 import path from 'path';
 import shell from 'shelljs';
-import { last } from 'lodash';
+import { isPlainObject, last, pick } from 'lodash';
 import { getHtmlContent, isMpa, minifyHtml } from './utils';
 import { name } from '../package.json';
 import { createHash } from 'crypto';
@@ -16,6 +16,29 @@ const uniqueHash = createHash('sha256')
   .update(String(new Date().getTime()))
   .digest('hex')
   .substring(0, 16);
+
+const isEmptyObject = <T = unknown>(val?: T): val is T =>
+  isPlainObject(val) && Object.getOwnPropertyNames(val).length === 0;
+
+const getPageData = (options, pageName) => {
+  let page: PageOptions = {};
+  const isSpa = isEmptyObject(options.pages);
+
+  if (isSpa) {
+    page = pick(options, [
+      'template',
+      'title',
+      'entry',
+      'filename',
+      'urlParams',
+      'inject',
+    ]);
+  } else {
+    page = options.pages[pageName] || {};
+  }
+
+  return page;
+};
 
 export default function htmlTemplate(
   userOptions: HtmlTemplateMpaOptions = {},
@@ -45,7 +68,6 @@ export default function htmlTemplate(
     name,
     configResolved(resolvedConfig) {
       const isBuild = resolvedConfig.mode === 'production';
-
       const {
         buildPrefixName,
         htmlHash,
@@ -137,16 +159,15 @@ export default function htmlTemplate(
             );
           })();
 
-          // const httpName = config.server.https ? 'https://' : 'http://';
-          const page = options.pages[pageName] || {};
+          const page = getPageData(options, pageName);
 
           const templateOption = page.template;
 
           const templatePath = templateOption
             ? resolve(templateOption)
             : isMpa(config)
-            ? resolve('public/index.html')
-            : resolve('index.html');
+              ? resolve('public/index.html')
+              : resolve('index.html');
 
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
@@ -154,7 +175,7 @@ export default function htmlTemplate(
             templatePath,
             pageEntry: page.entry || 'main',
             pageTitle: page.title || '',
-            injectOptions: page.injectOptions,
+            injectOptions: page.inject,
             isMPA: isMpa(config),
             entry: options.entry || '/src/main',
             extraData: {
@@ -164,10 +185,6 @@ export default function htmlTemplate(
             input: config.build.rollupOptions.input,
             pages: options.pages,
             jumpTarget: options.jumpTarget,
-            hasUnocss: String(config.plugins).includes('unocss'),
-            hasMpaPlugin: String(config.plugins).includes(
-              'vite-plugin-multi-pages',
-            ),
           });
 
           content = await server.transformIndexHtml?.(
@@ -209,18 +226,19 @@ export default function htmlTemplate(
         isWin32
           ? id.startsWith(resolve('').replace(/\\/g, '/')) &&
             id.endsWith('.html')
-          : id.startsWith(PREFIX)
+          : id.endsWith('.html')
       ) {
         const idNoPrefix = id.slice(PREFIX.length);
         const pageName = last(path.dirname(id).split('/')) || '';
 
-        const page = options.pages[pageName] || {};
+        const page = getPageData(options, pageName);
+
         const templateOption = page.template;
         const templatePath = templateOption
           ? resolve(templateOption)
           : isMpa(config)
-          ? resolve('public/index.html')
-          : resolve('index.html');
+            ? resolve('public/index.html')
+            : resolve('index.html');
 
         return getHtmlContent({
           pagesDir: options.pagesDir,
@@ -233,7 +251,7 @@ export default function htmlTemplate(
             base: config.base,
             url: isMpa(config) ? idNoPrefix : '/',
           },
-          injectOptions: page.injectOptions,
+          injectOptions: page.inject,
           entry: options.entry || '/src/main',
           input: config.build.rollupOptions.input,
           pages: options.pages,

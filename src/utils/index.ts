@@ -25,8 +25,6 @@ interface Payload {
   input: any;
   pages: any;
   jumpTarget?: string;
-  hasUnocss?: boolean;
-  hasMpaPlugin?: boolean;
   injectOptions?: InjectOptions;
 }
 
@@ -43,8 +41,6 @@ export async function getHtmlContent(payload: Payload) {
     input,
     pages,
     jumpTarget,
-    hasMpaPlugin,
-    hasUnocss,
     injectOptions,
   } = payload;
   let content = '';
@@ -99,7 +95,7 @@ export async function getHtmlContent(payload: Payload) {
 
   function getHref(item: string, params?: string) {
     const _params = params ? '?' + params : '';
-    return !hasMpaPlugin
+    return !isMPA
       ? `/${pagesDir}/${item}/index.html${_params}`
       : `/${item}/index.html${_params}`;
   }
@@ -118,20 +114,10 @@ export async function getHtmlContent(payload: Payload) {
 
   // 对主页 or / 的 index.html 进行 content 内容替换
   if (pageName === 'index') {
-    if (hasUnocss) {
-      content = content.replace(
-        '</body>',
-        `${links.join('').replace(/,/g, ' ')}
-    <script type="module">import 'uno.css';</script>\n</body>`,
-      );
-    } else {
-      content = content.replace(
-        '</body>',
-        `${links.join('').replace(/,/g, ' ')}\n</body>`,
-      );
-    }
-
-    // content = content.replace(/<%-.*%>/g, '');
+    content = content.replace(
+      '</body>',
+      `${links.join('').replace(/,/g, ' ')}\n</body>`,
+    );
   } else {
     content = content.replace(
       '</body>',

@@ -14,7 +14,37 @@ export interface InjectOptions {
   ejsOptions?: EJSOptions;
 }
 
-export interface Options {
+export type PageOptions = {
+  /**
+   * @default public/index.html
+   */
+  template?: string;
+  /**
+   * page title
+   * @default 'Home Page'
+   */
+  title?: string;
+  /**
+   * entry file
+   */
+  entry?: string;
+  /**
+   * template file
+   * @default '${pageName}/index.html' at dest
+   */
+  filename?: string;
+  /**
+   * add parameters to the root page link
+   * @example id=12323&token=0000
+   */
+  urlParams?: string;
+  /**
+   * @description inject options
+   */
+  inject?: InjectOptions;
+};
+
+export interface Options extends PageOptions {
   /**
    * multi page application directory
    * @default src/pages
@@ -25,35 +55,7 @@ export interface Options {
    * @see {@link https://cli.vuejs.org/config/#pages}
    */
   pages: {
-    [pageName: string]: {
-      /**
-       * @default public/index.html
-       */
-      template?: string;
-      /**
-       * page title
-       * @default 'Home Page'
-       */
-      title?: string;
-      /**
-       * entry file
-       */
-      entry?: string;
-      /**
-       * template file
-       * @default '${pageName}/index.html' at dest
-       */
-      filename?: string;
-      /**
-       * add parameters to the root page link
-       * @example id=12323&token=0000
-       */
-      urlParams?: string;
-      /**
-       * @description inject options
-       */
-      injectOptions?: InjectOptions;
-    };
+    [pageName: string]: PageOptions;
   };
   /**
    * @default '/src/main'

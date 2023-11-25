@@ -18,6 +18,21 @@ export default defineConfig({
         },
         'test-twos': {
           urlParams: 'id=33',
+          inject: {
+            data: {
+              title: '我是标题',
+              injectScript: `<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.common.js"></script>`,
+            },
+            tags: [
+              {
+                injectTo: 'body-prepend',
+                tag: 'div',
+                attrs: {
+                  id: 'tag',
+                },
+              },
+            ],
+          },
         },
       },
       buildCfg: {
@@ -25,9 +40,6 @@ export default defineConfig({
         moveHtmlDirTop: false,
         buildPrefixName: '',
         htmlHash: true,
-      },
-      data: {
-        title: '默认标题',
       },
     }),
   ],
