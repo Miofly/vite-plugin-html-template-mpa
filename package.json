@@ -1,8 +1,7 @@
 {
   "name": "vite-plugin-html-template-mpa",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "html template map for vite",
-  "type": "module",
   "keywords": [
     "vite-plugin",
     "mpa",
