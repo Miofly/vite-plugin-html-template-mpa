@@ -68,28 +68,6 @@ export async function getHtmlContent(payload: Payload) {
     console.error(e);
   }
 
-  // const links = Object.keys(input).map(item => {
-  //   const href = !hasMpaPlugin ? `${origin}/${pagesDir}/${item}/index.html` : `${origin}/${item}/index.html`;
-  //   return `<a target="${jumpTarget}" href="${href}">
-  //     ${Object.keys(pages).map((subItem: any) => {
-  //       if (subItem === item) {
-  //         return pages[subItem].title;
-  //       }
-  //       return '';
-  //   })}
-  //     ${item}
-  //     </a><br />`;
-  // });
-
-  // // const href = !hasMpaPlugin ? `${origin}/${pagesDir}/${item}/index.html` : `${origin}/${item}/index.html`;
-  //     return `${Object.keys(pages).map((subItem: any) => {
-  //       if (subItem === item) {
-  //         return `<a target="${jumpTarget}" href="${href}${pages[subItem].params ? '?' + pages[subItem].params : ''}">${pages[subItem].title || ''}${item}</a><br />`;
-  //       }
-  //       return `
-  //     <a target="${jumpTarget}" href="${href}">${item}</a><br />`;
-  //     })}`;
-
   const inputKeys = Object.keys(input || {});
   const pagesKeys = Object.keys(pages);
 

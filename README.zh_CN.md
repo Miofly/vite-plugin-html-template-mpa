@@ -2,6 +2,13 @@
 
 **中文** | [English](./README.md)
 
+## 重要更新
+
+- 由于 `vite-plugin-html` 插件不再维护，在 `vite 5.0` 版本启动时会有警告，所以此插件在单页应用中兼容了此插件的功能。
+- 版本 `> 1.0.0` 相关的 `api` 具有调整，使用时请注意，最新版本已支持 `vite 5.0.0` 版本。
+
+> 多页应用 `pagesDir` 默认值已调整为 `src/views`，如果多页应用使用出现问题，请配合 `vite-plugin-multi-pages` 一起使用
+
 ## 功能
 
 - `HTML` 压缩能力
@@ -30,7 +37,26 @@ pnpm add vite-plugin-html-template-mpa
 import htmlTemplate from 'vite-plugin-html-template-mpa';
 
 export default defineConfig({
-  plugins: [htmlTemplate(/* options */)],
+  plugins: [
+    htmlTemplate({
+      minify: true,
+      inject: {
+        data: {
+          title: '我是标题',
+          injectScript: `<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.common.js"></script>`,
+        },
+        tags: [
+          {
+            injectTo: 'body-prepend',
+            tag: 'div',
+            attrs: {
+              id: 'tag',
+            },
+          },
+        ],
+      },
+    }),
+  ],
 });
 ```
 
@@ -51,6 +77,21 @@ export default defineConfig({
         },
         'test-twos': {
           urlParams: 'id=33',
+          inject: {
+            data: {
+              title: '我是标题',
+              injectScript: `<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.common.js"></script>`,
+            },
+            tags: [
+              {
+                injectTo: 'body-prepend',
+                tag: 'div',
+                attrs: {
+                  id: 'tag',
+                },
+              },
+            ],
+          },
         },
       },
       buildCfg: {
@@ -59,9 +100,6 @@ export default defineConfig({
         buildPrefixName: '',
         htmlHash: true,
       },
-      data: {
-        title: '默认标题',
-      },
     }),
   ],
 });
@@ -69,11 +107,45 @@ export default defineConfig({
 
 ## 配置参数
 
+页面应用参数
+
+```typescript
+export type PageOptions = {
+  /**
+   * @default public/index.html
+   */
+  template?: string;
+  /**
+   * 页面 title
+   * @default 'Home Page'
+   */
+  title?: string;
+  /**
+   * 入口文件
+   */
+  entry?: string;
+  /**
+   * 模板文件
+   * @default '${pageName}/index.html' at dest
+   */
+  filename?: string;
+  /**
+   * 根页面链接添加参数
+   * @example id=12323&token=0000
+   */
+  urlParams?: string;
+  /**
+   * ejs 注入功能
+   */
+  inject?: InjectOptions;
+};
+```
+
 ```typescript
 export interface Options {
   /**
    * 多页应用目录
-   * @default src/pages
+   * @default src/views
    */
   pagesDir: string;
   /**
@@ -81,35 +153,7 @@ export interface Options {
    * @see {@link https://cli.vuejs.org/config/#pages}
    */
   pages: {
-    [pageName: string]: {
-      /**
-       * @default public/index.html
-       */
-      template?: string;
-      /**
-       * 页面 title
-       * @default 'Home Page'
-       */
-      title?: string;
-      /**
-       * 入口文件
-       */
-      entry?: string;
-      /**
-       * 模板文件
-       * @default '${pageName}/index.html' at dest
-       */
-      filename?: string;
-      /**
-       * 根页面链接添加参数
-       * @example id=12323&token=0000
-       */
-      urlParams?: string;
-      /**
-       * ejs 注入功能
-       */
-      injectOptions?: InjectOptions;
-    };
+    [pageName: string]: PageOptions;
   };
   /**
    * @default '/src/main'
@@ -184,6 +228,12 @@ minifyCSS: true,
 
 ### ejs 使用示例
 
+由于多页应用的 ejs 变量，并非所有页面都会注入所以，变量的写法可参照如下
+
+```
+<%if(typeof injectScript !== 'undefined'){%><%-injectScript%><%}%>
+```
+
 ```javascript
 htmlTemplate({
   pages: {
@@ -193,7 +243,7 @@ htmlTemplate({
       urlParams: 'id=211212&token=00000',
       // 要在模板 html 中注入一些 js 等
       // 在 public/index.hmtl 需要的位置添加上 <%if(typeof injectScript !== 'undefined'){%><%-injectScript%><%}%>
-      injectOptions: {
+      inject: {
         data: {
           // 这是在模板中要注入的变量名称(自定义)，主要要在 index.hmtl 插入变量
           injectScript:

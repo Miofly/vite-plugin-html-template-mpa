@@ -10,9 +10,6 @@ export default defineConfig({
     vue(),
     htmlTemplate({
       minify: true,
-      buildCfg: {
-        htmlHash: true,
-      },
       inject: {
         data: {
           title: '我是标题',

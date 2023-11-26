@@ -2,7 +2,7 @@ import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
 import type { HtmlTemplateMpaOptions, PageOptions } from './types';
 import path from 'path';
 import shell from 'shelljs';
-import { isPlainObject, last, pick } from 'lodash';
+import { isPlainObject, last, pick } from 'lodash-es';
 import { getHtmlContent, isMpa, minifyHtml } from './utils';
 import { name } from '../package.json';
 import { createHash } from 'crypto';
@@ -44,7 +44,7 @@ export default function htmlTemplate(
   userOptions: HtmlTemplateMpaOptions = {},
 ): Plugin {
   const options = {
-    pagesDir: 'src/pages',
+    pagesDir: 'src/views',
     pages: {},
     jumpTarget: '_self',
     buildCfg: {
@@ -148,7 +148,8 @@ export default function htmlTemplate(
             return next();
           }
 
-          const url = req.url;
+          // Todo
+          const url = options.pagesDir + req.originalUrl;
 
           const pageName = (() => {
             if (url === '/') {

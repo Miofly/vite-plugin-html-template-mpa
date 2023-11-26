@@ -2,6 +2,13 @@
 
 **English** | [中文](./README.zh_CN.md)
 
+## Important Update
+
+- Since the 'vite-plugin-html' plugin is no longer maintained, there will be a warning when the 'vite 5.0' version is launched, so this plugin is compatible with the functionality of this plugin in single-page applications.
+- The 'API' related to version '> 1.0.0' has been adjusted, please note that the latest version already supports 'Vite 5.0.0'.
+
+> The default value of 'pagesDir' for multi-page apps has been adjusted to 'src/views', if you have problems using multi-page apps, please use it with 'vite-plugin-multi-pages'
+
 ## Features
 
 - HTML compression capability
@@ -30,7 +37,26 @@ Single page application
 import htmlTemplate from 'vite-plugin-html-template-mpa';
 
 export default defineConfig({
-  plugins: [htmlTemplate(/* options */)],
+  plugins: [
+    htmlTemplate({
+      minify: true,
+      inject: {
+        data: {
+          title: 'title text',
+          injectScript: `<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.common.js"></script>`,
+        },
+        tags: [
+          {
+            injectTo: 'body-prepend',
+            tag: 'div',
+            attrs: {
+              id: 'tag',
+            },
+          },
+        ],
+      },
+    }),
+  ],
 });
 ```
 
@@ -51,6 +77,21 @@ export default defineConfig({
         },
         'test-twos': {
           urlParams: 'id=33',
+          inject: {
+            data: {
+              title: 'title text',
+              injectScript: `<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.common.js"></script>`,
+            },
+            tags: [
+              {
+                injectTo: 'body-prepend',
+                tag: 'div',
+                attrs: {
+                  id: 'tag',
+                },
+              },
+            ],
+          },
         },
       },
       buildCfg: {
@@ -69,6 +110,40 @@ export default defineConfig({
 
 ## Options
 
+page application parameters
+
+```typescript
+export type PageOptions = {
+  /**
+   * @default public/index.html
+   */
+  template?: string;
+  /**
+   * page title
+   * @default 'Home Page'
+   */
+  title?: string;
+  /**
+   * entry file
+   */
+  entry?: string;
+  /**
+   * template file
+   * @default '${pageName}/index.html' at dest
+   */
+  filename?: string;
+  /**
+   * add parameters to the root page link
+   * @example id=12323&token=0000
+   */
+  urlParams?: string;
+  /**
+   * @description inject options
+   */
+  inject?: InjectOptions;
+}
+```
+
 ```typescript
 export interface Options {
   /**
@@ -81,35 +156,7 @@ export interface Options {
    * @see {@link https://cli.vuejs.org/config/#pages}
    */
   pages: {
-    [pageName: string]: {
-      /**
-       * @default public/index.html
-       */
-      template?: string;
-      /**
-       * page title
-       * @default 'Home Page'
-       */
-      title?: string;
-      /**
-       * entry file
-       */
-      entry?: string;
-      /**
-       * template file
-       * @default '${pageName}/index.html' at dest
-       */
-      filename?: string;
-      /**
-       * add parameters to the root page link
-       * @example id=12323&token=0000
-       */
-      urlParams?: string;
-      /**
-       * @description inject options
-       */
-      injectOptions?: InjectOptions;
-    };
+    [pageName: string]: PageOptions;
   };
   /**
    * @default '/src/main'
@@ -184,6 +231,12 @@ minifyCSS: true,
 
 ### ejs usage example
 
+Since not all pages are injected into EJS variables for multi-page applications, the variables can be written as follows
+
+```
+<%if(typeof injectScript !== 'undefined'){%><%-injectScript%><%}%>
+```
+
 ```javascript
 htmlTemplate({
   pages: {
@@ -193,7 +246,7 @@ htmlTemplate({
       urlParams: 'id=211212&token=00000',
       // To inject some JS into the template HTML
       // in public/index.hmtl add the required location <%if(typeof injectScript !== 'undefined'){%><%-injectScript%><%}%>
-      injectOptions: {
+      inject: {
         data: {
           // This is the variable name (custom) to be injected in the template, mainly in the index : hmtl inserting variables
           injectScript:

@@ -1,19 +1,15 @@
 {
   "name": "vite-project",
-  "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
-  "peerDependencies": {
-    "vue": "3.2.39"
-  },
   "devDependencies": {
+    "vue": "3.3.9",
     "vite-plugin-multi-pages": "0.0.12",
-    "@vitejs/plugin-vue": "4.2.3",
-    "vite": "5.0.2",
-    "typescript": "4.8.3"
+    "@vitejs/plugin-vue": "4.5.0"
   }
 }
