@@ -2,7 +2,7 @@ import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
 import type { HtmlTemplateMpaOptions, PageOptions } from './types';
 import path from 'path';
 import shell from 'shelljs';
-import { isPlainObject, last, pick } from 'lodash-es';
+import { isPlainObject, last, pick } from 'lodash';
 import { getHtmlContent, isMpa, minifyHtml } from './utils';
 import { name } from '../package.json';
 import { createHash } from 'crypto';
