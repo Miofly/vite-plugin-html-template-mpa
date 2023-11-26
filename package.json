@@ -43,7 +43,6 @@
     "email": "953212389@qq.com"
   },
   "peerDependencies": {
-    "vite": ">=2.0.0",
     "typescript": ">=4.0.0"
   },
   "dependencies": {
@@ -58,7 +57,8 @@
     "@types/html-minifier-terser": "7.0.0",
     "@types/lodash": "4.14.186",
     "@types/shelljs": "0.8.11",
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "vite": "5.0.2"
   },
   "homepage": "https://github.com/Miofly/vite-plugin-html-template-mpa",
   "repository": {
