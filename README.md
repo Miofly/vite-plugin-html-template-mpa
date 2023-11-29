@@ -279,6 +279,8 @@ htmlTemplate({
 
 ## use examples
 
+The local debugging sample project requires renaming '_pnpm-workspace.yaml' in the root directory to 'pnpm-workspace.yaml' and then performing a 'pnpm install' reinstall
+
 single page application
 
 - [src/examples](https://github.com/Miofly/vite-plugin-html-template-mpa/tree/master/examples/vite-plugin-demo-spa)
@@ -286,6 +288,10 @@ single page application
 multi page application
 
 - [src/examples](https://github.com/Miofly/vite-plugin-html-template-mpa/tree/master/examples/vite-plugin-demo-mpa)
+
+多页应用-固定版本
+
+- [src/examples](https://github.com/Miofly/vite-plugin-htm-template-mpa/tree/master/examples/complete-demo-for-mpa)
 
 ## MORE
 

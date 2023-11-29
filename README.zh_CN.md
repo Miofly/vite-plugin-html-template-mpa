@@ -276,6 +276,8 @@ htmlTemplate({
 
 ## 使用示例
 
+本地调试示例项目需要将根目录中的 `_pnpm-workspace.yaml` 重命名为 `pnpm-workspace.yaml`，然后执行 `pnpm install` 重新安装
+
 单页应用
 
 - [src/examples](https://github.com/Miofly/vite-plugin-html-template-mpa/tree/master/examples/vite-plugin-demo-spa)
