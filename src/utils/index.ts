@@ -152,3 +152,29 @@ export async function minifyHtml(
 
   return await minifyFn(html, minifyOptions as MinifyOptions);
 }
+
+export function isPlainObject(value) {
+  if (Object.prototype.toString.call(value) !== '[object Object]') {
+    return false;
+  }
+
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === null || prototype === Object.prototype;
+}
+
+export function pick(obj, keys) {
+  return keys.reduce((acc, key) => {
+    if (obj.hasOwnProperty(key)) {
+      acc[key] = obj[key];
+    }
+    return acc;
+  }, {});
+}
+
+export function last(array) {
+  if (!Array.isArray(array) || array.length === 0) {
+    return undefined;
+  }
+
+  return array[array.length - 1];
+}
