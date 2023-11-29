@@ -284,6 +284,10 @@ htmlTemplate({
 
 - [src/examples](https://github.com/Miofly/vite-plugin-html-template-mpa/tree/master/examples/vite-plugin-demo-mpa)
 
+多页应用-固定版本
+
+- [src/examples](https://github.com/Miofly/vite-plugin-html-template-mpa/tree/master/examples/complete-demo-for-mpa)
+
 ## 更多
 
 - 配合 `vite-plugin-multi-pages`

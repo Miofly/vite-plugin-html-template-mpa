@@ -9,7 +9,8 @@
   },
   "devDependencies": {
     "vue": "3.3.9",
-    "@vitejs/plugin-vue": "4.5.0",
-    "vite-plugin-multi-pages": "0.0.13"
+    "vite": "latest",
+    "typescript": "latest",
+    "@vitejs/plugin-vue": "4.5.0"
   }
 }
