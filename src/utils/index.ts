@@ -5,6 +5,7 @@ import type { Options as MinifyOptions } from 'html-minifier-terser';
 import { minify as minifyFn } from 'html-minifier-terser';
 import { render } from 'ejs';
 import { type InjectOptions } from '../types';
+import { omit } from 'lodash';
 
 async function readHtmlTemplate(templatePath: string) {
   return await fs.readFile(templatePath, { encoding: 'utf8' });
