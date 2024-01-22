@@ -46,6 +46,8 @@ const getPageData = (options, pageName) => {
   return page;
 };
 
+let pageName;
+
 export default function htmlTemplate(
   userOptions: HtmlTemplateMpaOptions = {},
 ): Plugin {
@@ -154,10 +156,9 @@ export default function htmlTemplate(
             return next();
           }
 
-          // Todo
           const url = options.pagesDir + req.originalUrl;
 
-          const pageName = (() => {
+          pageName = (() => {
             if (url === '/') {
               return 'index';
             }
@@ -209,8 +210,7 @@ export default function htmlTemplate(
         if (!isMpa(config)) {
           return `${PREFIX}/${path.basename(id)}`;
         } else {
-          const pageName =
-            last(path.dirname(id).split(isWin32 ? '\\' : '/')) || '';
+          pageName = last(path.dirname(id).split(isWin32 ? '\\' : '/')) || '';
 
           const _inputCfg: any = config.build.rollupOptions.input;
 
@@ -236,7 +236,7 @@ export default function htmlTemplate(
           : id.endsWith('.html')
       ) {
         const idNoPrefix = id.slice(PREFIX.length);
-        const pageName = last(path.dirname(id).split('/')) || '';
+        pageName = last(path.dirname(id).split('/')) || '';
 
         const page = getPageData(options, pageName);
 
@@ -265,6 +265,13 @@ export default function htmlTemplate(
         });
       }
       return null;
+    },
+    transformIndexHtml(data) {
+      const page = getPageData(options, pageName);
+      return {
+        html: data,
+        tags: page.inject.tags || [],
+      };
     },
     async generateBundle(_, bundle) {
       const htmlFiles = Object.keys(bundle).filter(i => i.endsWith('.html'));
@@ -310,6 +317,7 @@ export default function htmlTemplate(
         }
       }
     },
+
     closeBundle() {
       const dest = (config.build && config.build.outDir) || 'dist';
       if (isMpa(config)) {
