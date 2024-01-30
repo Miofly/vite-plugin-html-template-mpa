@@ -11,6 +11,6 @@
     "vue": "3.4.15",
     "vite": "latest",
     "typescript": "latest",
-    "@vitejs/plugin-vue": "4.5.0"
+    "@vitejs/plugin-vue": "5.0.3"
   }
 }
