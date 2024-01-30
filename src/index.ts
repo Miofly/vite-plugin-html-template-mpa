@@ -270,7 +270,7 @@ export default function htmlTemplate(
       const page = getPageData(options, pageName);
       return {
         html: data,
-        tags: page.inject.tags || [],
+        tags: page.inject?.tags || [],
       };
     },
     async generateBundle(_, bundle) {

@@ -91,12 +91,12 @@ export async function getHtmlContent(payload: Payload) {
   });
 
   // 对主页 or / 的 index.html 进行 content 内容替换
-  if (pageName === 'index') {
+  if (pageName === 'index' && links?.length) {
     content = content.replace(
       '</body>',
       `${links.join('').replace(/,/g, ' ')}\n</body>`,
     );
-  } else {
+  } else if (isMPA) {
     content = content.replace(
       '</body>',
       `<script type="module" src="${entryJsPath}"></script></body>`,
