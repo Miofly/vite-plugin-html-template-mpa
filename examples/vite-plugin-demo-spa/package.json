@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vue": "3.4.15",
+    "vue": "3.4.19",
     "vite": "latest",
     "typescript": "latest",
     "@vitejs/plugin-vue": "5.0.3"
