@@ -7,7 +7,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "latest",
+    "vite": ">=2.0.0",
     "typescript": "latest",
     "vue": "3.4.19",
     "vite-plugin-multi-pages": "0.0.14",
