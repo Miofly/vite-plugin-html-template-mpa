@@ -17,7 +17,7 @@ export default defineConfig({
   plugins: [
     vue(),
     htmlTemplate({
-      template: resolve(__dirname, '../index.html'),
+      // template: resolve(__dirname, '../index.html'),
       minify: true,
       inject: {
         data: {
