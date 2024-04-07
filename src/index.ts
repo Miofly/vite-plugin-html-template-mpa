@@ -1,4 +1,5 @@
 import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
+import { normalizePath } from 'vite';
 import type { HtmlTemplateMpaOptions, PageOptions } from './types';
 import path from 'path';
 import shell from 'shelljs';
@@ -146,7 +147,16 @@ export default function htmlTemplate(
           ...(resolvedConfig.build.rollupOptions.output as any),
           ..._output,
         };
+      } else if (
+        options.template &&
+        !resolvedConfig.build.rollupOptions.input
+      ) {
+        const key = options.template.replace(/\.html/, '');
+        resolvedConfig.build.rollupOptions.input = {
+          [key]: options.template,
+        };
       }
+
       config = resolvedConfig;
     },
     configureServer(server: ViteDevServer) {

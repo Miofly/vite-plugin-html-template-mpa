@@ -78,17 +78,20 @@ export async function getHtmlContent(payload: Payload) {
       : `/${item}/index.html${_params}`;
   }
 
-  const links = inputKeys.map(item => {
-    if (pagesKeys.includes(item)) {
-      const href = getHref(item, pages[item].urlParams);
-      return `<a target="${jumpTarget}" href="${href}">${
-        pages[item].title || ''
-      } ${item}</a><br />`;
-    }
-    return `<a target="${jumpTarget}" href="${getHref(
-      item,
-    )}">${item}</a><br />`;
-  });
+  const links =
+    inputKeys?.length > 1
+      ? inputKeys.map(item => {
+          if (pagesKeys.includes(item)) {
+            const href = getHref(item, pages[item].urlParams);
+            return `<a target="${jumpTarget}" href="${href}">${
+              pages[item].title || ''
+            } ${item}</a><br />`;
+          }
+          return `<a target="${jumpTarget}" href="${getHref(
+            item,
+          )}">${item}</a><br />`;
+        })
+      : [];
 
   // 对主页 or / 的 index.html 进行 content 内容替换
   if (pageName === 'index' && links?.length) {
@@ -120,7 +123,7 @@ export async function getHtmlContent(payload: Payload) {
 
 export function isMpa(viteConfig: ResolvedConfig) {
   const input = viteConfig?.build?.rollupOptions?.input ?? undefined;
-  return typeof input !== 'string' && Object.keys(input || {}).length >= 1;
+  return typeof input !== 'string' && Object.keys(input || {}).length > 1;
 }
 
 function getOptions(minify: boolean): MinifyOptions {
