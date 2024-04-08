@@ -147,11 +147,12 @@ export default function htmlTemplate(
           ..._output,
         };
       } else if (
+        !isBuild &&
         options.template &&
         !resolvedConfig.build.rollupOptions.input
       ) {
         resolvedConfig.build.rollupOptions.input = {
-          main: options.template,
+          main: path.resolve(resolvedConfig.root, options.template),
         };
       }
 
