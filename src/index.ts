@@ -150,9 +150,8 @@ export default function htmlTemplate(
         options.template &&
         !resolvedConfig.build.rollupOptions.input
       ) {
-        const key = options.template.replace(/\.html/, '');
         resolvedConfig.build.rollupOptions.input = {
-          [key]: options.template,
+          main: options.template,
         };
       }
 
