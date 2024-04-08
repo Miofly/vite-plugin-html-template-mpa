@@ -1,19 +1,18 @@
-import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
-import { normalizePath } from 'vite';
-import type { HtmlTemplateMpaOptions, PageOptions } from './types';
+import { createHash } from 'crypto';
 import path from 'path';
+import type { OutputOptions } from 'rollup';
 import shell from 'shelljs';
+import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
+import { name } from '../package.json';
+import type { HtmlTemplateMpaOptions, PageOptions } from './types';
 import {
-  isPlainObject,
-  last,
-  pick,
   getHtmlContent,
   isMpa,
+  isPlainObject,
+  last,
   minifyHtml,
+  pick,
 } from './utils';
-import { name } from '../package.json';
-import { createHash } from 'crypto';
-import type { OutputOptions } from 'rollup';
 
 const resolve = (p: string) => path.resolve(process.cwd(), p);
 
