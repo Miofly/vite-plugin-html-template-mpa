@@ -219,7 +219,7 @@ export default function htmlTemplate(
         if (!isMpa(config)) {
           return `${PREFIX}/${path.basename(id)}`;
         } else {
-          pageName = last(path.dirname(id).split(isWin32 ? '\\' : '/')) || '';
+          pageName = last(path.dirname(id).split('/')) || '';
 
           const _inputCfg: any = config.build.rollupOptions.input;
 
