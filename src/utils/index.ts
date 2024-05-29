@@ -1,9 +1,9 @@
-import type { HtmlTemplateMpaOptions } from '../types';
+import { render } from 'ejs';
 import { promises as fs } from 'fs';
-import type { ResolvedConfig } from 'vite';
 import type { Options as MinifyOptions } from 'html-minifier-terser';
 import { minify as minifyFn } from 'html-minifier-terser';
-import { render } from 'ejs';
+import type { ResolvedConfig } from 'vite';
+import type { HtmlTemplateMpaOptions } from '../types';
 import { type InjectOptions } from '../types';
 
 async function readHtmlTemplate(templatePath: string) {
