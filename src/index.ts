@@ -3,7 +3,7 @@ import path from 'path';
 import type { OutputOptions } from 'rollup';
 import shell from 'shelljs';
 import { normalizePath } from 'vite';
-import fs from 'fs-extra';
+import fs from 'fs';
 import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
 import { name } from '../package.json';
 import type { HtmlTemplateMpaOptions, PageOptions } from './types';
