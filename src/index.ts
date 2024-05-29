@@ -40,7 +40,7 @@ const getPageData = (options: HtmlTemplateMpaOptions, pageName: string) => {
     'inject',
   ]);
 
-  const isSpa = isEmptyObject(options.pages);
+  const isSpa = !options.pages || isEmptyObject(options.pages);
 
   if (isSpa) {
     return commonOptions;
@@ -165,7 +165,6 @@ export default function htmlTemplate(
     },
     configureServer(server: ViteDevServer) {
       return () => {
-        console.log('====');
         server.middlewares.use(async (req, res, next) => {
           if (!req.url?.endsWith('.html') && req.url !== '/') {
             return next();
