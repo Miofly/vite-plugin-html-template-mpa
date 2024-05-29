@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite';
+// @ts-nocheck
+import { defineConfig, type PluginOption } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import htmlTemplate from '../../src';
 import mpa from 'vite-plugin-multi-pages';
@@ -6,11 +7,8 @@ import mpa from 'vite-plugin-multi-pages';
 export default defineConfig({
   plugins: [
     vue(),
-    mpa({
-      scanDir: 'src/views',
-    }),
+    mpa(),
     htmlTemplate({
-      pagesDir: 'src/views',
       pages: {
         'test-one': {
           title: '测试标题',
@@ -42,5 +40,5 @@ export default defineConfig({
         htmlHash: true,
       },
     }),
-  ],
+  ] as unknown as PluginOption[],
 });

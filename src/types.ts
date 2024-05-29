@@ -4,7 +4,7 @@ import type { Options as EJSOptions } from 'ejs';
 
 export interface InjectOptions {
   /**
-   *  @description Data injected into the html template
+   * @description Data injected into the html template
    */
   data?: Record<string, any>;
   tags?: HtmlTagDescriptor[];

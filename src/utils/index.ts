@@ -11,12 +11,16 @@ async function readHtmlTemplate(templatePath: string) {
 }
 
 interface Payload {
+  /** 页面文件夹位置 */
   pagesDir: string;
+  /** 多页面目录的名称 */
   pageName: string;
+  /** 模版位置 */
   templatePath: string;
+  /** 入口文件如 main.ts */
   pageEntry: string;
   pageTitle: string;
-  isMPA: boolean;
+  /** 兜底 main.ts 入口 */
   entry: HtmlTemplateMpaOptions['entry'];
   extraData: {
     base: string;
@@ -26,6 +30,7 @@ interface Payload {
   pages: any;
   jumpTarget?: string;
   injectOptions?: InjectOptions;
+  isMPA: boolean;
 }
 
 export async function getHtmlContent(payload: Payload) {
@@ -121,6 +126,7 @@ export async function getHtmlContent(payload: Payload) {
   );
 }
 
+// 是否为多页应用
 export function isMpa(viteConfig: ResolvedConfig) {
   const input = viteConfig?.build?.rollupOptions?.input ?? undefined;
   return typeof input !== 'string' && Object.keys(input || {}).length > 1;

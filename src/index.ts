@@ -2,6 +2,8 @@ import { createHash } from 'crypto';
 import path from 'path';
 import type { OutputOptions } from 'rollup';
 import shell from 'shelljs';
+import { normalizePath } from 'vite';
+import fs from 'fs-extra';
 import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
 import { name } from '../package.json';
 import type { HtmlTemplateMpaOptions, PageOptions } from './types';
@@ -17,7 +19,7 @@ import {
 const resolve = (p: string) => path.resolve(process.cwd(), p);
 
 const PREFIX = 'src';
-const isWin32 = false;
+
 const uniqueHash = createHash('sha256')
   .update(String(new Date().getTime()))
   .digest('hex')
@@ -29,7 +31,7 @@ const isEmptyObject = <T = unknown>(val?: T): val is T =>
 const getPageData = (options: HtmlTemplateMpaOptions, pageName: string) => {
   let page: PageOptions = {};
 
-  const spaPageOptions: PageOptions = pick(options, [
+  const commonOptions: PageOptions = pick(options, [
     'template',
     'title',
     'entry',
@@ -41,9 +43,9 @@ const getPageData = (options: HtmlTemplateMpaOptions, pageName: string) => {
   const isSpa = isEmptyObject(options.pages);
 
   if (isSpa) {
-    return spaPageOptions;
+    return commonOptions;
   } else {
-    page = { ...options.pages[pageName], ...spaPageOptions } || {};
+    page = { ...commonOptions, ...options.pages[pageName] } || {};
 
     return page;
   }
@@ -146,7 +148,7 @@ export default function htmlTemplate(
         }
 
         resolvedConfig.build.rollupOptions.output = {
-          ...(resolvedConfig.build.rollupOptions.output as any),
+          ...resolvedConfig.build.rollupOptions.output,
           ..._output,
         };
       } else if (
@@ -163,6 +165,7 @@ export default function htmlTemplate(
     },
     configureServer(server: ViteDevServer) {
       return () => {
+        console.log('====');
         server.middlewares.use(async (req, res, next) => {
           if (!req.url?.endsWith('.html') && req.url !== '/') {
             return next();
@@ -183,6 +186,7 @@ export default function htmlTemplate(
 
           const templateOption = page.template;
 
+          // 若自定义了 template 则取自定义否则
           const templatePath = templateOption
             ? resolve(templateOption)
             : isMpa(config)
@@ -219,21 +223,40 @@ export default function htmlTemplate(
     },
     resolveId(id) {
       if (id.endsWith('.html')) {
+        id = normalizePath(id);
         if (!isMpa(config)) {
+          /**
+           * id: /project-path/project-name/index.html
+           * => src/index.html
+           */
           return `${PREFIX}/${path.basename(id)}`;
         } else {
+          /**
+           * input example
+           * {
+           *   'test-one': '/project-path/project-name/src/views/test-one/index.html',
+           *   'test-two': '/project-path/project-name/src/views/test-two/index.html',
+           *   'test-three': '/project-path/project-name/src/views/test-twos/index.html'
+           * }
+           *
+           * pageName: test-one id: '/project-path/project-name/src/views/test-one/index.html',
+           */
           pageName = last(path.dirname(id).split('/')) || '';
 
-          const _inputCfg: any = config.build.rollupOptions.input;
+          const inputPages = config.build.rollupOptions.input;
 
-          for (const key in _inputCfg) {
-            if (_inputCfg?.[key] === id) {
-              return isWin32
-                ? id.replace(/\\/g, '/')
-                : `${PREFIX}/${options.pagesDir.replace(
-                    'src/',
-                    '',
-                  )}/${pageName}/index.html`;
+          /**
+           * src/views/test-one/index.html
+           * src/views/test-two/index.html
+           * src/views/test-twos/index.html
+           */
+          for (const key in inputPages as Record<string, any>) {
+            const _key = normalizePath(key);
+            if (inputPages?.[_key] === id) {
+              return `${PREFIX}/${options.pagesDir.replace(
+                'src/',
+                '',
+              )}/${pageName}/index.html`;
             }
           }
         }
@@ -241,37 +264,56 @@ export default function htmlTemplate(
       return null;
     },
     load(id) {
-      if (
-        isWin32
-          ? id.startsWith(resolve('').replace(/\\/g, '/')) &&
-            id.endsWith('.html')
-          : id.endsWith('.html')
-      ) {
+      if (id.endsWith('.html')) {
+        /**
+         * id: example
+         * src/views/test-one/index.html
+         * src/views/test-two/index.html
+         * src/views/test-twos/index.html
+         */
+        id = normalizePath(id);
+
+        // /views/test-twos/index.html
         const idNoPrefix = id.slice(PREFIX.length);
-        pageName = last(path.dirname(id).split('/')) || '';
+
+        // test-one
+        // test-two
+        pageName = path
+          .dirname(id)
+          .split(options.pagesDir)[1]
+          .replace(/\//g, '');
 
         const page = getPageData(options, pageName);
+
+        // index.html 默认的位置
+        const publicIndexHtml = resolve('public/index.html');
+        const indexHtml = resolve('index.html');
 
         const templateOption = page.template;
         const templatePath = templateOption
           ? resolve(templateOption)
-          : isMpa(config)
-            ? resolve('public/index.html')
-            : resolve('index.html');
+          : fs.existsSync(publicIndexHtml)
+            ? publicIndexHtml
+            : indexHtml;
 
         return getHtmlContent({
           pagesDir: options.pagesDir,
           pageName,
           templatePath,
           pageEntry: page.entry || 'main',
+          entry: options.entry || '/src/main',
           pageTitle: page.title || '',
           isMPA: isMpa(config),
+          /**
+           * { base: '/', url: '/views/test-one/index.html' }
+           * { base: '/', url: '/views/test-two/index.html' }
+           * { base: '/', url: '/views/test-twos/index.html' }
+           */
           extraData: {
             base: config.base,
             url: isMpa(config) ? idNoPrefix : '/',
           },
           injectOptions: page.inject,
-          entry: options.entry || '/src/main',
           input: config.build.rollupOptions.input,
           pages: options.pages,
         });
@@ -329,11 +371,12 @@ export default function htmlTemplate(
         }
       }
     },
-
     closeBundle() {
-      const dest = (config.build && config.build.outDir) || 'dist';
       if (isMpa(config)) {
-        shell.rm('-rf', resolve(`${dest}/index.html`));
+        shell.rm(
+          '-rf',
+          resolve(`${config.build?.outDir || 'dist'}/index.html`),
+        );
       }
     },
   };
