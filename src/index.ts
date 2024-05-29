@@ -26,24 +26,27 @@ const uniqueHash = createHash('sha256')
 const isEmptyObject = <T = unknown>(val?: T): val is T =>
   isPlainObject(val) && Object.getOwnPropertyNames(val).length === 0;
 
-const getPageData = (options, pageName) => {
+const getPageData = (options: HtmlTemplateMpaOptions, pageName: string) => {
   let page: PageOptions = {};
+
+  const spaPageOptions: PageOptions = pick(options, [
+    'template',
+    'title',
+    'entry',
+    'filename',
+    'urlParams',
+    'inject',
+  ]);
+
   const isSpa = isEmptyObject(options.pages);
 
   if (isSpa) {
-    page = pick(options, [
-      'template',
-      'title',
-      'entry',
-      'filename',
-      'urlParams',
-      'inject',
-    ]);
+    return spaPageOptions;
   } else {
-    page = options.pages[pageName] || {};
-  }
+    page = { ...options.pages[pageName], ...spaPageOptions } || {};
 
-  return page;
+    return page;
+  }
 };
 
 let pageName;
@@ -51,7 +54,7 @@ let pageName;
 export default function htmlTemplate(
   userOptions: HtmlTemplateMpaOptions = {},
 ): Plugin {
-  const options = {
+  const options: HtmlTemplateMpaOptions = {
     pagesDir: 'src/views',
     pages: {},
     jumpTarget: '_self',
