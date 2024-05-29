@@ -278,10 +278,10 @@ export default function htmlTemplate(
 
         // test-one
         // test-two
-        pageName = path
-          .dirname(id)
-          .split(options.pagesDir)[1]
-          .replace(/\//g, '');
+        pageName = last(path.dirname(id).split(options.pagesDir)).replace(
+          /\//g,
+          '',
+        );
 
         const page = getPageData(options, pageName);
 
