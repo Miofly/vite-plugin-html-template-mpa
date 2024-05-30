@@ -3,10 +3,15 @@ import { defineConfig, type PluginOption } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import htmlTemplate from '../../src';
 import mpa from 'vite-plugin-multi-pages';
+import legacy from '@vitejs/plugin-legacy';
 
 export default defineConfig({
   plugins: [
     vue(),
+    legacy({
+      targets: ['defaults', 'last 2 versions', 'not dead', '> 0.2%'],
+      additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
+    }),
     mpa(),
     htmlTemplate({
       pages: {

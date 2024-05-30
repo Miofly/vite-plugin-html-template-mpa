@@ -77,7 +77,6 @@ export default function htmlTemplate(
 
   let config: ResolvedConfig;
   return {
-    enforce: 'post',
     name,
     configResolved(resolvedConfig) {
       const isBuild = resolvedConfig.mode === 'production';
