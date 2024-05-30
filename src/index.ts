@@ -206,7 +206,7 @@ export default function htmlTemplate(
               url,
             },
             input: config.build.rollupOptions.input,
-            pages: options.pages,
+            pages: options.pages || {},
             jumpTarget: options.jumpTarget,
           });
 

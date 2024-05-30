@@ -74,7 +74,7 @@ export async function getHtmlContent(payload: Payload) {
   }
 
   const inputKeys = Object.keys(input || {});
-  const pagesKeys = Object.keys(pages);
+  const pagesKeys = Object.keys(pages || {});
 
   function getHref(item: string, params?: string) {
     const _params = params ? '?' + params : '';
