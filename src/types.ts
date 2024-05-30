@@ -42,6 +42,10 @@ export type PageOptions = {
    * @description inject options
    */
   inject?: InjectOptions;
+  /**
+   * @description add entry script
+   */
+  addEntryScript?: boolean;
 };
 
 export interface Options extends PageOptions {

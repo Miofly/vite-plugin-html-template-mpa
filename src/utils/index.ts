@@ -22,6 +22,7 @@ interface Payload {
   pageTitle: string;
   /** 兜底 main.ts 入口 */
   entry: HtmlTemplateMpaOptions['entry'];
+  addEntryScript?: boolean;
   extraData: {
     base: string;
     url: string;
@@ -47,6 +48,7 @@ export async function getHtmlContent(payload: Payload) {
     pages,
     jumpTarget,
     injectOptions,
+    addEntryScript,
   } = payload;
   let content = '';
 
@@ -104,7 +106,7 @@ export async function getHtmlContent(payload: Payload) {
       '</body>',
       `${links.join('').replace(/,/g, ' ')}\n</body>`,
     );
-  } else if (isMPA) {
+  } else if (isMPA || addEntryScript) {
     content = content.replace(
       '</body>',
       `<script type="module" src="${entryJsPath}"></script></body>`,

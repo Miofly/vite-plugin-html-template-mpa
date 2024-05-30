@@ -205,6 +205,7 @@ export default function htmlTemplate(
               base: config.base,
               url,
             },
+            addEntryScript: options.addEntryScript || false,
             input: config.build.rollupOptions.input,
             pages: options.pages || {},
             jumpTarget: options.jumpTarget,
