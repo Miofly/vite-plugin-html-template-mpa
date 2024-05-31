@@ -3,17 +3,14 @@ import { defineConfig, type PluginOption } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import htmlTemplate from '../../src';
 import mpa from 'vite-plugin-multi-pages';
-import legacy from '@vitejs/plugin-legacy';
 
 export default defineConfig({
   plugins: [
     vue(),
-    legacy({
-      targets: ['defaults', 'last 2 versions', 'not dead', '> 0.2%'],
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
-    }),
     mpa(),
     htmlTemplate({
+      template:
+        '/Users/wfly/Documents/code/wfly/vite-plugin/vite-plugin-html-template-mpa/examples/business/index.html',
       pages: {
         'test-one': {
           title: '测试标题',
@@ -37,12 +34,6 @@ export default defineConfig({
             ],
           },
         },
-      },
-      buildCfg: {
-        moveHtmlTop: true,
-        moveHtmlDirTop: false,
-        buildPrefixName: '',
-        htmlHash: true,
       },
     }),
   ] as unknown as PluginOption[],
