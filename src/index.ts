@@ -28,7 +28,7 @@ const uniqueHash = createHash('sha256')
 const isEmptyObject = <T = unknown>(val?: T): val is T =>
   isPlainObject(val) && Object.getOwnPropertyNames(val).length === 0;
 
-const getPageData = (options: HtmlTemplateMpaOptions, pageName: string) => {
+const getPageData = (options: any, pageName: string) => {
   let page: PageOptions = {};
 
   const commonOptions: PageOptions = pick(options, [
@@ -45,7 +45,7 @@ const getPageData = (options: HtmlTemplateMpaOptions, pageName: string) => {
   if (isSpa) {
     return commonOptions;
   } else {
-    page = { ...commonOptions, ...options.pages[pageName] } || {};
+    page = { ...commonOptions, ...options.pages?.[pageName] } || {};
 
     return page;
   }
@@ -56,7 +56,7 @@ let pageName;
 export default function htmlTemplate(
   userOptions: HtmlTemplateMpaOptions = {},
 ): Plugin {
-  const options: HtmlTemplateMpaOptions = {
+  const options = {
     pagesDir: 'src/views',
     pages: {},
     jumpTarget: '_self',
