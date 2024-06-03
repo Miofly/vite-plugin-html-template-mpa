@@ -316,6 +316,7 @@ export default function htmlTemplate(
             url: isMpa(config) ? idNoPrefix : '/',
           },
           injectOptions: page.inject,
+          addEntryScript: options.addEntryScript || false,
           input: config.build.rollupOptions.input,
           pages: options.pages,
         });
