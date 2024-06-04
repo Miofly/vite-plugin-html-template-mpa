@@ -73,6 +73,7 @@ export default function htmlTemplate(
       htmlPrefixReplaceValue: '',
     },
     minify: true,
+    mpaAutoAddMainTs: true,
     ...userOptions,
   };
 
@@ -208,6 +209,7 @@ export default function htmlTemplate(
               url,
             },
             addEntryScript: options.addEntryScript || false,
+            mpaAutoAddMainTs: options.mpaAutoAddMainTs,
             input: config.build.rollupOptions.input,
             pages: options.pages || {},
             jumpTarget: options.jumpTarget,
@@ -317,6 +319,7 @@ export default function htmlTemplate(
           },
           injectOptions: page.inject,
           addEntryScript: options.addEntryScript || false,
+          mpaAutoAddMainTs: options.mpaAutoAddMainTs,
           input: config.build.rollupOptions.input,
           pages: options.pages,
         });

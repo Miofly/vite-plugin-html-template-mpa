@@ -23,6 +23,7 @@ interface Payload {
   /** 兜底 main.ts 入口 */
   entry: HtmlTemplateMpaOptions['entry'];
   addEntryScript?: boolean;
+  mpaAutoAddMainTs?: boolean;
   extraData: {
     base: string;
     url: string;
