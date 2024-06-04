@@ -50,6 +50,7 @@ export async function getHtmlContent(payload: Payload) {
     jumpTarget,
     injectOptions,
     addEntryScript,
+    mpaAutoAddMainTs,
   } = payload;
   let content = '';
 
@@ -107,7 +108,7 @@ export async function getHtmlContent(payload: Payload) {
       '</body>',
       `${links.join('').replace(/,/g, ' ')}\n</body>`,
     );
-  } else if (isMPA || addEntryScript) {
+  } else if ((isMPA && mpaAutoAddMainTs) || addEntryScript) {
     content = content.replace(
       '</body>',
       `<script type="module" src="${entryJsPath}"></script></body>`,
