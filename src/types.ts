@@ -46,10 +46,8 @@ export type PageOptions = {
    * @description add entry script
    */
   addEntryScript?: boolean;
-  /**
-   * @description add entry script
-   */
   mpaAutoAddMainTs?: boolean;
+  onlyUseEjsAndMinify?: boolean;
 };
 
 export interface Options extends PageOptions {

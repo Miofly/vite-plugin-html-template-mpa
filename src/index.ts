@@ -93,7 +93,7 @@ export default function htmlTemplate(
       } = options.buildCfg;
       const assetDir = resolvedConfig.build.assetsDir || 'assets';
 
-      if (isMpa(resolvedConfig)) {
+      if (!options.onlyUseEjsAndMinify && isMpa(resolvedConfig)) {
         const _output = resolvedConfig.build.rollupOptions
           .output as OutputOptions;
 
@@ -189,11 +189,13 @@ export default function htmlTemplate(
           const templateOption = page.template;
 
           // 若自定义了 template 则取自定义否则
-          const templatePath = templateOption
-            ? resolve(templateOption)
-            : isMpa(config)
-              ? resolve('public/index.html')
-              : resolve('index.html');
+          const templatePath = options.onlyUseEjsAndMinify
+            ? config.build?.rollupOptions?.input?.[pageName]
+            : templateOption
+              ? resolve(templateOption)
+              : isMpa(config)
+                ? resolve('public/index.html')
+                : resolve('index.html');
 
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
@@ -213,6 +215,7 @@ export default function htmlTemplate(
             input: config.build.rollupOptions.input,
             pages: options.pages || {},
             jumpTarget: options.jumpTarget,
+            onlyUseEjsAndMinify: options.onlyUseEjsAndMinify,
           });
 
           content = await server.transformIndexHtml?.(
@@ -226,7 +229,7 @@ export default function htmlTemplate(
       };
     },
     resolveId(id) {
-      if (id.endsWith('.html')) {
+      if (!options.onlyUseEjsAndMinify && id.endsWith('.html')) {
         id = normalizePath(id);
         if (!isMpa(config)) {
           /**

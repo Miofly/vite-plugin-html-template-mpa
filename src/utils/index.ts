@@ -33,6 +33,7 @@ interface Payload {
   jumpTarget?: string;
   injectOptions?: InjectOptions;
   isMPA: boolean;
+  onlyUseEjsAndMinify?: boolean;
 }
 
 export async function getHtmlContent(payload: Payload) {
@@ -51,6 +52,7 @@ export async function getHtmlContent(payload: Payload) {
     injectOptions,
     addEntryScript,
     mpaAutoAddMainTs,
+    onlyUseEjsAndMinify,
   } = payload;
   let content = '';
 
@@ -102,17 +104,19 @@ export async function getHtmlContent(payload: Payload) {
         })
       : [];
 
-  // 对主页 or / 的 index.html 进行 content 内容替换
-  if (pageName === 'index' && links?.length) {
-    content = content.replace(
-      '</body>',
-      `${links.join('').replace(/,/g, ' ')}\n</body>`,
-    );
-  } else if ((isMPA && mpaAutoAddMainTs) || addEntryScript) {
-    content = content.replace(
-      '</body>',
-      `<script type="module" src="${entryJsPath}"></script></body>`,
-    );
+  if (!onlyUseEjsAndMinify) {
+    // 对主页 or / 的 index.html 进行 content 内容替换
+    if (pageName === 'index' && links?.length) {
+      content = content.replace(
+        '</body>',
+        `${links.join('').replace(/,/g, ' ')}\n</body>`,
+      );
+    } else if ((isMPA && mpaAutoAddMainTs) || addEntryScript) {
+      content = content.replace(
+        '</body>',
+        `<script type="module" src="${entryJsPath}"></script></body>`,
+      );
+    }
   }
 
   const { data, ejsOptions } = injectOptions || {
