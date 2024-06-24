@@ -9,6 +9,12 @@ export default defineConfig({
     vue(),
     mpa(),
     htmlTemplate({
+      buildCfg: {
+        moveHtmlTop: true,
+        moveHtmlDirTop: false,
+        buildPrefixName: '',
+        htmlHash: false,
+      },
       template:
         '/Users/wfly/Documents/code/wfly/vite-plugin/vite-plugin-html-template-mpa/examples/business/index.html',
       pages: {

@@ -387,16 +387,6 @@ export default function htmlTemplate(
           resolve(`${config.build?.outDir || 'dist'}/index.html`),
         );
       }
-      if (!isMpa(config) && isBuild) {
-        const root = config.root || process.cwd();
-        const dest = (config.build && config.build.outDir) || 'dist';
-        const resolve = (p: string) => path.resolve(root, p);
-
-        // 1. move src/*.html to dest root
-        shell.mv(resolve(`${dest}/${PREFIX}/*.html`), resolve(dest));
-        // 2. remove empty src dir
-        shell.rm('-rf', resolve(`${dest}/${PREFIX}`));
-      }
     },
   };
 }
