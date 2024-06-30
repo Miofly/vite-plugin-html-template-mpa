@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 import path from 'path';
 import type { OutputOptions } from 'rollup';
 import shell from 'shelljs';
-import { normalizePath } from 'vite';
+import { normalizePath, type PluginOption } from 'vite';
 import fs from 'fs';
 import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
 import { name } from '../package.json';
@@ -54,7 +54,7 @@ const getPageData = (options: any, pageName: string) => {
 let pageName;
 let isBuild = false;
 
-export default function htmlTemplate(
+export function htmlTemplate(
   userOptions: HtmlTemplateMpaOptions = {},
 ): Plugin {
   const options = {
@@ -336,6 +336,47 @@ export default function htmlTemplate(
         tags: page.inject?.tags || [],
       };
     },
+    closeBundle() {
+      if (isMpa(config)) {
+        shell.rm(
+          '-rf',
+          resolve(`${config.build?.outDir || 'dist'}/index.html`),
+        );
+      }
+    },
+  };
+}
+
+export function createMinifyHtmlPlugin(
+  userOptions: HtmlTemplateMpaOptions = {},
+) {
+  const options = {
+    pagesDir: 'src/views',
+    pages: {},
+    jumpTarget: '_self',
+    buildCfg: {
+      moveHtmlTop: true,
+      moveHtmlDirTop: false,
+      buildPrefixName: '',
+      htmlHash: false,
+      buildAssetDirName: '',
+      buildChunkDirName: '',
+      buildEntryDirName: '',
+      htmlPrefixSearchValue: '',
+      htmlPrefixReplaceValue: '',
+    },
+    minify: true,
+    mpaAutoAddMainTs: true,
+    ...userOptions,
+  };
+
+  let config: ResolvedConfig;
+  return {
+    name: 'vite:minify-html',
+    enforce: 'post',
+    configResolved(resolvedConfig) {
+      config = resolvedConfig;
+    },
     async generateBundle(_, bundle) {
       const htmlFiles = Object.keys(bundle).filter(i => i.endsWith('.html'));
 
@@ -352,8 +393,8 @@ export default function htmlTemplate(
 
           if (htmlHash) {
             _source = htmlChunk.source
-              .replace(/\.js/g, `.js?${uniqueHash}`)
-              .replace(/.css/g, `.css?${uniqueHash}`);
+            .replace(/\.js/g, `.js?${uniqueHash}`)
+            .replace(/.css/g, `.css?${uniqueHash}`);
           }
           if (options.minify) {
             htmlChunk.source = await minifyHtml(_source, options.minify);
@@ -380,15 +421,13 @@ export default function htmlTemplate(
         }
       }
     },
-    closeBundle() {
-      if (isMpa(config)) {
-        shell.rm(
-          '-rf',
-          resolve(`${config.build?.outDir || 'dist'}/index.html`),
-        );
-      }
-    },
-  };
+  }
 }
 
 export type { HtmlTemplateMpaOptions };
+
+export default function createHtmlPlugin(
+  userOptions: HtmlTemplateMpaOptions = {},
+): PluginOption[] {
+  return [htmlTemplate(userOptions), createMinifyHtmlPlugin(userOptions) as PluginOption]
+}
