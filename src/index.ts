@@ -54,9 +54,7 @@ const getPageData = (options: any, pageName: string) => {
 let pageName;
 let isBuild = false;
 
-export function htmlTemplate(
-  userOptions: HtmlTemplateMpaOptions = {},
-): Plugin {
+export function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
   const options = {
     pagesDir: 'src/views',
     pages: {},
@@ -393,8 +391,8 @@ export function createMinifyHtmlPlugin(
 
           if (htmlHash) {
             _source = htmlChunk.source
-            .replace(/\.js/g, `.js?${uniqueHash}`)
-            .replace(/.css/g, `.css?${uniqueHash}`);
+              .replace(/\.js/g, `.js?${uniqueHash}`)
+              .replace(/.css/g, `.css?${uniqueHash}`);
           }
           if (options.minify) {
             htmlChunk.source = await minifyHtml(_source, options.minify);
@@ -421,7 +419,7 @@ export function createMinifyHtmlPlugin(
         }
       }
     },
-  }
+  };
 }
 
 export type { HtmlTemplateMpaOptions };
@@ -429,5 +427,8 @@ export type { HtmlTemplateMpaOptions };
 export default function createHtmlPlugin(
   userOptions: HtmlTemplateMpaOptions = {},
 ): PluginOption[] {
-  return [htmlTemplate(userOptions), createMinifyHtmlPlugin(userOptions) as PluginOption]
+  return [
+    htmlTemplate(userOptions),
+    createMinifyHtmlPlugin(userOptions) as PluginOption,
+  ];
 }
