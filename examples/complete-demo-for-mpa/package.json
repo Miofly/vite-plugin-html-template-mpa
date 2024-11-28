@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "vite-plugin-multi-pages": "0.0.14",
-    "vite-plugin-html-template-mpa": "1.0.4",
+    "vite-plugin-html-template-mpa": "workspace:*",
     "@vitejs/plugin-vue": "4.2.3",
     "vite": "5.0.2",
     "typescript": "4.8.3"

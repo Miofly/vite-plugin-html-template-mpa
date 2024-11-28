@@ -92,8 +92,7 @@ export function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
       const assetDir = resolvedConfig.build.assetsDir || 'assets';
 
       if (!options.onlyUseEjsAndMinify && isMpa(resolvedConfig)) {
-        const _output = resolvedConfig.build.rollupOptions
-          .output as OutputOptions;
+        const _output = resolvedConfig.build.rollupOptions.output as any;
 
         if (buildPrefixName) {
           const _input = {} as any;
