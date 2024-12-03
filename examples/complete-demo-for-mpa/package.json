@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "peerDependencies": {
-    "vue": "3.4.19"
+    "vue": "3.5.13"
   },
   "devDependencies": {
     "vite-plugin-multi-pages": "0.0.14",
