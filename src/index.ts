@@ -255,8 +255,8 @@ export function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
            * src/views/test-twos/index.html
            */
           for (const key in inputPages as Record<string, any>) {
-            const _key = normalizePath(key);
-            if (inputPages?.[_key] === id) {
+            const value = normalizePath(inputPages?.[key]);
+            if (value === id) {
               return `${PREFIX}/${options.pagesDir.replace(
                 'src/',
                 '',
