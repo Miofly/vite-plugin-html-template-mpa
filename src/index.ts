@@ -1,10 +1,9 @@
 import { createHash } from 'crypto';
-import path from 'path';
-import type { OutputOptions } from 'rollup';
-import shell from 'shelljs';
-import { normalizePath, type PluginOption } from 'vite';
 import fs from 'fs';
+import path from 'path';
+import shell from 'shelljs';
 import type { Plugin, ResolvedConfig, ViteDevServer } from 'vite';
+import { normalizePath, type PluginOption } from 'vite';
 import { name } from '../package.json';
 import type { HtmlTemplateMpaOptions, PageOptions } from './types';
 import {
@@ -45,7 +44,7 @@ const getPageData = (options: any, pageName: string) => {
   if (isSpa) {
     return commonOptions;
   } else {
-    page = { ...commonOptions, ...options.pages?.[pageName] } || {};
+    page = { ...commonOptions, ...options.pages?.[pageName] };
 
     return page;
   }
