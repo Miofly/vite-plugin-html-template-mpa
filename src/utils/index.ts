@@ -79,7 +79,7 @@ export async function getHtmlContent(payload: Payload) {
     console.error(e);
   }
 
-  const inputKeys = Object.keys(input || {});
+  const inputKeys = typeof input === 'string' ? [] : Object.keys(input || {});
   const pagesKeys = Object.keys(pages || {});
 
   function getHref(item: string, params?: string) {

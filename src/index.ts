@@ -155,9 +155,7 @@ export function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
         options.template &&
         !resolvedConfig.build.rollupOptions.input
       ) {
-        resolvedConfig.build.rollupOptions.input = {
-          main: path.resolve(resolvedConfig.root, options.template),
-        };
+        resolvedConfig.build.rollupOptions.input = path.resolve(resolvedConfig.root, options.template);
       }
 
       config = resolvedConfig;
@@ -184,9 +182,14 @@ export function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
 
           const templateOption = page.template;
 
+          const _input = config.build?.rollupOptions?.input;
           // 若自定义了 template 则取自定义否则
           const templatePath = options.onlyUseEjsAndMinify
-            ? config.build?.rollupOptions?.input?.[pageName]
+            ? typeof _input === 'string'
+              ? _input
+              : (config.build?.rollupOptions?.input as Record<string, any>)?.[
+                pageName
+                ]
             : templateOption
               ? resolve(templateOption)
               : isMpa(config)
