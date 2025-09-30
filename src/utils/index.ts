@@ -34,6 +34,7 @@ interface Payload {
   injectOptions?: InjectOptions;
   isMPA: boolean;
   onlyUseEjsAndMinify?: boolean;
+  customDevServer?: boolean,
 }
 
 export async function getHtmlContent(payload: Payload) {
