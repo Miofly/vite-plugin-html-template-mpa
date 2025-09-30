@@ -71,13 +71,12 @@ export function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
     },
     minify: true,
     mpaAutoAddMainTs: true,
-    customDevServer: false,
     ...userOptions,
   };
 
   let config: ResolvedConfig;
 
-  let viteConfig: Plugin = {
+  return {
     name,
     config(config, env) {
       isBuild = env.command === 'build';
@@ -161,6 +160,73 @@ export function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
       }
 
       config = resolvedConfig;
+    },
+    configureServer(server: ViteDevServer) {
+      return () => {
+        server.middlewares.use(async (req, res, next) => {
+          if (!req.url?.endsWith('.html') && req.url !== '/') {
+            return next();
+          }
+
+          const url = options.pagesDir + req.originalUrl;
+
+          pageName = (() => {
+            if (url === '/') {
+              return 'index';
+            }
+            return (
+              url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index'
+            );
+          })();
+
+          const page = getPageData(options, pageName);
+
+          const templateOption = page.template;
+
+          const _input = config.build?.rollupOptions?.input;
+          // 若自定义了 template 则取自定义否则
+          const templatePath = options.onlyUseEjsAndMinify
+            ? typeof _input === 'string'
+              ? _input
+              : (config.build?.rollupOptions?.input as Record<string, any>)?.[
+                pageName
+                ]
+            : templateOption
+              ? resolve(templateOption)
+              : isMpa(config)
+                ? resolve('public/index.html')
+                : resolve('index.html');
+
+          let content = await getHtmlContent({
+            pagesDir: options.pagesDir,
+            pageName,
+            templatePath,
+            pageEntry: page.entry || 'main',
+            pageTitle: page.title || '',
+            injectOptions: page.inject,
+            isMPA: isMpa(config),
+            entry: options.entry || '/src/main',
+            extraData: {
+              base: config.base,
+              url,
+            },
+            addEntryScript: options.addEntryScript || false,
+            mpaAutoAddMainTs: options.mpaAutoAddMainTs,
+            input: config.build.rollupOptions.input,
+            pages: options.pages || {},
+            jumpTarget: options.jumpTarget,
+            onlyUseEjsAndMinify: options.onlyUseEjsAndMinify,
+          });
+
+          content = await server.transformIndexHtml?.(
+            url,
+            content,
+            req.originalUrl,
+          );
+
+          res.end(content);
+        });
+      };
     },
     resolveId(id) {
       if (!options.onlyUseEjsAndMinify && id.endsWith('.html')) {
@@ -278,82 +344,7 @@ export function htmlTemplate(userOptions: HtmlTemplateMpaOptions = {}): Plugin {
         );
       }
     },
-  }
-
-  if (!options.customDevServer) {
-    viteConfig = {
-      configureServer(server: ViteDevServer) {
-        return () => {
-          server.middlewares.use(async (req, res, next) => {
-            if (!req.url?.endsWith('.html') && req.url !== '/') {
-              return next();
-            }
-
-            const url = options.pagesDir + req.originalUrl;
-
-            pageName = (() => {
-              if (url === '/') {
-                return 'index';
-              }
-              return (
-                url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index'
-              );
-            })();
-
-            const page = getPageData(options, pageName);
-
-            const templateOption = page.template;
-
-            const _input = config.build?.rollupOptions?.input;
-            // 若自定义了 template 则取自定义否则
-            const templatePath = options.onlyUseEjsAndMinify
-              ? typeof _input === 'string'
-                ? _input
-                : (config.build?.rollupOptions?.input as Record<string, any>)?.[
-                  pageName
-                  ]
-              : templateOption
-                ? resolve(templateOption)
-                : isMpa(config)
-                  ? resolve('public/index.html')
-                  : resolve('index.html');
-
-            let content = await getHtmlContent({
-              pagesDir: options.pagesDir,
-              pageName,
-              templatePath,
-              pageEntry: page.entry || 'main',
-              pageTitle: page.title || '',
-              injectOptions: page.inject,
-              isMPA: isMpa(config),
-              entry: options.entry || '/src/main',
-              extraData: {
-                base: config.base,
-                url,
-              },
-              addEntryScript: options.addEntryScript || false,
-              mpaAutoAddMainTs: options.mpaAutoAddMainTs,
-              input: config.build.rollupOptions.input,
-              pages: options.pages || {},
-              jumpTarget: options.jumpTarget,
-              onlyUseEjsAndMinify: options.onlyUseEjsAndMinify,
-            });
-
-            content = await server.transformIndexHtml?.(
-              url,
-              content,
-              req.originalUrl,
-            );
-
-            res.end(content);
-          });
-        };
-      },
-      ...viteConfig
-    }
-  }
-
-  return viteConfig;
+  };
 }
 
 export function createMinifyHtmlPlugin(
@@ -438,6 +429,11 @@ export type { HtmlTemplateMpaOptions };
 export default function createHtmlPlugin(
   userOptions: HtmlTemplateMpaOptions = {},
 ): PluginOption[] {
+  if (userOptions.onlyMinify) {
+  	return [
+      createMinifyHtmlPlugin(userOptions) as PluginOption
+    ]
+  }
   return [
     htmlTemplate(userOptions),
     createMinifyHtmlPlugin(userOptions) as PluginOption,
