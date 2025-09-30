@@ -48,6 +48,7 @@ export type PageOptions = {
   addEntryScript?: boolean;
   mpaAutoAddMainTs?: boolean;
   onlyUseEjsAndMinify?: boolean;
+  customDevServer?: boolean,
 };
 
 export interface Options extends PageOptions {
